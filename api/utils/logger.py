@@ -95,7 +95,7 @@ class Formatter(logging.Formatter):
             severity=logger.levelname,
             message_dict=payload.get("message_dict"),
             message=payload.get("message"),
-            timestamp=str(datetime.datetime.utcnow())
+            timestamp=str(datetime.datetime.utcnow(datetime.tzinfo(-3)))
         )
         
         return json.dumps(log_status)

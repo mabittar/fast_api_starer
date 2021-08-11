@@ -1,13 +1,13 @@
-from api.utils.database import SQLConnector
-from api.utils.logger import Logger
+from .utils.database import SQLConnector
+from .utils.logger import Logger
+from .fast_api_app import FastAPIStarter
 from fastapi import FastAPI, Request
 from starlette import responses
 
 
 async def on_startup():
     SQLConnector.create_engine()
-    Logger.create_logger()
-    Logger.info(msg="stating...")
+    Logger().info(msg="STARTING...")
 
 
 async def on_shutdown():
@@ -16,7 +16,7 @@ async def on_shutdown():
 
 
 def create() -> FastAPI:
-    api = FastAPI.create(
+    api = FastAPIStarter.create(
         title="FastAPI Fast Starter Project",
         on_startup=[on_startup],
         on_shutdown=[on_shutdown],

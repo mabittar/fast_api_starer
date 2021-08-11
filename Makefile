@@ -55,7 +55,7 @@ run: venv requirements.txt
 		. venv/bin/activate; \
 		pip install -r requirements.txt; \
 		clear ;\
-		. app.sh; \
+		. api/app.sh --reload; \
 	)
 
 .PHONY: compose
