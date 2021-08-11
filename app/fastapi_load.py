@@ -1,5 +1,5 @@
 
-from .framework.resources import router
+from framework.resources import router
 from fastapi import FastAPI, Request
 from typing import Any, Callable, List, Optional, Sequence
 from starlette.responses import JSONResponse

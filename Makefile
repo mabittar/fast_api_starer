@@ -10,7 +10,7 @@ help:
 	      "    run: Run app\n"\
 	      "    compose: Activate docker compose\n"\
 	      "    compose-up: Docker-up\n"\
-	      "    compose-build: Docker build app\n"\
+	      "    compose-build: Docker build App Image\n"\
 	      "\n"\
 	      "View the Makefile for more documentation about all of the available commands"
 	@exit 2
@@ -38,7 +38,7 @@ setup: venv requirements-dev.txt
 		echo "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 		echo " Start virtual environment"; \
 		echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
-		. source venv/bin/activate; \
+		source venv/bin/activate; \
 		echo "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 		echo " Install requirements"; \
 		echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
@@ -55,7 +55,7 @@ run: venv requirements.txt
 		. venv/bin/activate; \
 		pip install -r requirements.txt; \
 		clear ;\
-		. api/app.sh --reload; \
+		. app/app.sh --reload; \
 	)
 
 .PHONY: compose

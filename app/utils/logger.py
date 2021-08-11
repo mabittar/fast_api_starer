@@ -1,9 +1,10 @@
-import os
-import logging
-import sys
-import json
 import datetime
-from api.utils.encoder import Encoder
+import json
+import logging
+import os
+import sys
+
+from utils.encoder import Encoder
 
 
 class Logger:
@@ -45,7 +46,7 @@ class Logger:
         record.update(kwargs)
         log_json = dict(message_dict=record, message=msg)
         return log_json
-        
+
 
 class LogHandler(object):
     loggers = {}
@@ -56,7 +57,7 @@ class LogHandler(object):
 
         if self.loggers.get(class_name):
             logger = self.loggers.get(class_name)
-            
+
             return logger
 
         else:
@@ -95,7 +96,6 @@ class Formatter(logging.Formatter):
             severity=logger.levelname,
             message_dict=payload.get("message_dict"),
             message=payload.get("message"),
-            timestamp=str(datetime.datetime.utcnow(datetime.tzinfo(-3)))
-        )
-        
+            timestamp=str(datetime.datetime.now(datetime.timezone(offset=datetime.timedelta(hours=-3)))))
+
         return json.dumps(log_status)

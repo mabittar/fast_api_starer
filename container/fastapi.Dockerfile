@@ -13,7 +13,7 @@ EXPOSE 8000
 ARG COMMIT
 ENV COMMIT=$COMMIT
 
-RUN mkdir /app
+ADD ../app /app
 WORKDIR /app
 
 CMD [ "python", "-B", "main.py"]

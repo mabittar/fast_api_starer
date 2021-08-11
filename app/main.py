@@ -1,13 +1,17 @@
-from .utils.database import SQLConnector
-from .utils.logger import Logger
-from .fast_api_app import FastAPIStarter
+from utils.database import SQLConnector
+from utils.logger import Logger
+from fastapi_load import FastAPIStarter
 from fastapi import FastAPI, Request
 from starlette import responses
+import sys
+
+version = f"{sys.version_info.major}.{sys.version_info.minor}"
 
 
+    
 async def on_startup():
     SQLConnector.create_engine()
-    Logger().info(msg="STARTING...")
+    Logger().info(msg=f"STARTING...Using python version {version}")
 
 
 async def on_shutdown():
