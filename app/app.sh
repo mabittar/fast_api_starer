@@ -12,7 +12,7 @@ if [ ! -z ${UVICORN_WORKERS} ]; then WORKERS=${UVICORN_WORKERS}; fi
 if [ "$1" = "--reload" ]
 then
     echo "--reload option enabled"
-    python -B ${APP}.py
+    python -B ${APP}.py --reload
 else
     gunicorn -k uvicorn.workers.UvicornWorker --threads 3 --timeout 0 --graceful-timeout ${TIMEOUT} --keep-alive ${TIMEOUT} --forwarded-allow-ips="*" --log-level 'warning' -w ${WORKERS} -b ${HOST}:${PORT} ${APP}
 fi

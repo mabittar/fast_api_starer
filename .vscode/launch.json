@@ -10,13 +10,12 @@
             "request": "launch",
             "stopOnEntry": false,
             "python": "${workspaceRoot}/venv/bin/python",
-            "program": "${workspaceRoot}/venv/bin/uvicorn",
+            "module": "gunicorn",
             "args": [
-                "-B",
                 "main:app",
                 "--reload",
             ],
-            "cwd": "${workspaceRoot}",
+            "cwd": "${workspaceFolder}/app",
             "debugOptions": [
                 "WaitOnAbnormalExit",
                 "WaitOnNormalExit",
@@ -25,20 +24,6 @@
             "envFile": "${workspaceFolder}/local.env",
             "preLaunchTask": "set_environment",
             "postDebugTask": "killdebugger"
-        },
-        {
-            "name": "Send Manual Msg",
-            "type": "python",
-            "request": "launch",
-            "stopOnEntry": false,
-            "env": {
-                "PYTHONPATH": "${workspaceRoot}"
-            },
-            "python": "${workspaceRoot}/venv/bin/python",
-            "program": "${workspaceRoot}/manual/send_manual_message.py",
-            "envFile": "${workspaceFolder}/local.env",
-            "cwd": "${workspaceRoot}",
-            "preLaunchTask": "set_environment",
         }
     ]
 }
