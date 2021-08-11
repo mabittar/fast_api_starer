@@ -1,0 +1,44 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "FastAPI Test",
+            "type": "python",
+            "request": "launch",
+            "stopOnEntry": false,
+            "python": "${workspaceRoot}/venv/bin/python",
+            "program": "${workspaceRoot}/venv/bin/uvicorn",
+            "args": [
+                "-B",
+                "main:app",
+                "--reload",
+            ],
+            "cwd": "${workspaceRoot}",
+            "debugOptions": [
+                "WaitOnAbnormalExit",
+                "WaitOnNormalExit",
+                "RedirectOutput"
+            ],
+            "envFile": "${workspaceFolder}/local.env",
+            "preLaunchTask": "set_environment",
+            "postDebugTask": "killdebugger"
+        },
+        {
+            "name": "Send Manual Msg",
+            "type": "python",
+            "request": "launch",
+            "stopOnEntry": false,
+            "env": {
+                "PYTHONPATH": "${workspaceRoot}"
+            },
+            "python": "${workspaceRoot}/venv/bin/python",
+            "program": "${workspaceRoot}/manual/send_manual_message.py",
+            "envFile": "${workspaceFolder}/local.env",
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": "set_environment",
+        }
+    ]
+}

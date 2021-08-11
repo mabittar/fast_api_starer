@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  app:
+    image: fastapi
+    build:
+      context: ../..
+      dockerfile: container/fastapi.Dockerfile
+      args:
+        PROJECT_NAME: $PROJECT_NAME
+        APP_ENV: local
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../local.env
