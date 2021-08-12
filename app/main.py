@@ -19,6 +19,9 @@ async def on_shutdown():
     Logger.info(msg="shutting down...")
 
 
+# Create your endpoints here
+
+
 def create() -> FastAPI:
     api = FastAPIStarter.create(
         title="FastAPI Fast Starter Project",
