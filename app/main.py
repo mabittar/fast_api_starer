@@ -1,4 +1,4 @@
-from utils.database import SQLConnector
+from utils.database import DBConnector
 from utils.logger import Logger
 from fastapi_load import FastAPIStarter
 from fastapi import FastAPI, Request
@@ -10,12 +10,12 @@ version = f"{sys.version_info.major}.{sys.version_info.minor}"
 
     
 async def on_startup():
-    SQLConnector.create_engine()
+    DBConnector.create_engine()
     Logger().info(msg=f"STARTING...Using python version {version}")
 
 
 async def on_shutdown():
-    SQLConnector.close()
+    DBConnector.close()
     Logger.info(msg="shutting down...")
 
 

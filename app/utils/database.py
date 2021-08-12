@@ -8,7 +8,7 @@ from sqlalchemy.pool import QueuePool
 from utils.config import DATABASE_URL, DB_POOL_SIZE
 
 
-class SQLConnector:
+class DBConnector:
     engine: Optional[Engine]
 
     @classmethod
