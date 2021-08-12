@@ -53,7 +53,6 @@ run: venv requirements.txt
 		echo " Runinng APP"; \
 		echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 		. venv/bin/activate; \
-		pip install -r requirements.txt; \
 		clear ;\
 		. app/app.sh --reload; \
 	)

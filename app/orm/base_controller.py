@@ -2,7 +2,7 @@ from app.utils.database import DBConnector
 from typing import List, Union
 
 from sqlalchemy.orm import Session
-from .base_model import BaseModel
+from pydantic import BaseModel
 
 
 class BaseController:
