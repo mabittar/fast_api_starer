@@ -63,24 +63,24 @@ compose: compose-build
 	echo "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 	echo " Starting containerized environment"; \
 	echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
-	docker-compose -f container/local.docker-compose.yml up
+	docker -compose -f ./container/local.docker-compose.yml up; \
 
 .PHONY: compose-up
 compose-up: compose-build
-	docker-compose -f container/local.docker-compose.yml up
+	docker -compose -f container/local.docker-compose.yml up
 
 .PHONY: compose-down
 compose-down:
-	docker-compose -f container/local.docker-compose.yml down
+	docker -compose -f container/local.docker-compose.yml down
 
-.PHONY: compose-build
-compose-build:
+.PHONY: build
+build:
 	( \
 		clear; \
 		echo "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 		echo " Building containers... "; \
 		echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
-		docker-compose -f container/local.docker-compose.yml \
+		docker -compose -f container/local.docker-compose.yml \
 		build --parallel \
-		--build-arg  COMMIT=$$(git rev-parse HEAD) \
+		--build-arg; \
 	)

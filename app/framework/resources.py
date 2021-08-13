@@ -1,5 +1,5 @@
 from starlette.responses import Response
-from utils.config import COMMIT, SERVICE_NAME
+from utils.config import PROJECT_NAME
 from os import getpid
 from typing import List
 from fastapi import APIRouter, Request, responses
@@ -24,7 +24,7 @@ router = APIRouter()
 )
 async def home(req: Request) -> HealthResponse:
     return HealthResponse(
-        service=SERVICE_NAME, commit=COMMIT, id=getpid()
+        service=PROJECT_NAME, id=getpid()
     )
 
 
