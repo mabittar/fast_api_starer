@@ -4,5 +4,6 @@
   "python.testing.nosetestsEnabled": false,
   "python.testing.pytestEnabled": true,
   "python.testing.autoTestDiscoverOnSaveEnabled": true,
-  "cSpell.language": "en,pt-BR"
+  "cSpell.language": "en,pt-BR",
+  "cSpell.words": ["uvicorn"]
 }

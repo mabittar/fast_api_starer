@@ -3,8 +3,8 @@ import multiprocessing
 import os
 
 workers_per_core_str = os.getenv("WORKERS_PER_CORE", "1")
-max_workers_str = os.getenv("MAX_WORKERS")
-use_max_workers = None
+max_workers_str = os.getenv("MAX_WORKERS", 1)
+use_max_workers = True
 if max_workers_str:
     use_max_workers = int(max_workers_str)
 web_concurrency_str = os.getenv("WEB_CONCURRENCY", None)

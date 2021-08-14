@@ -16,12 +16,10 @@ class FastAPIStarter:
     ) -> FastAPI:
 
         swagger_url = f"/docs/"
-        openapi_url = f"/docs/openapi_url.json"
 
         api = FastAPI(
             title=title,
             docs_url=swagger_url,
-            openapi_url=openapi_url,
             on_startup=on_startup,
             on_shutdown=on_shutdown,
         )

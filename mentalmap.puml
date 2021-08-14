@@ -1,0 +1,53 @@
+	
+@startmindmap
+* API 
+** Python
+*** Por quê?
+*** Introdução
+*** Corrotinas
+*** Paralelismo
+*** Herança e Polimorfismo (introdução)
+*** Frameworks o que são e pq?
+**** Falcon 
+**** FastAPI 
+**** Django Ninja
+** HTTP 
+*** URL / URI
+*** REST 
+*** HTTP Verbs 
+*** HTTP Errors
+*** Servidor HTTP em python - talvez?
+*** Camadas conexão web
+*** CORS (Cross-Origin Resource Sharing)
+**** Gunicorn
+**** Uvicorn
+** Git 
+*** introdução
+*** versionamento
+** Docker
+*** Introdução
+*** O que é?
+*** Por que utilizar?
+*** Docker-compose, up, down
+** Makefile
+*** Introdução
+*** Path
+*** EnvVars
+** Template API em FastAPI
+*** Estrutura de pastas
+**** main.py / guincorn_conf
+**** endpoints
+**** ORM 
+**** Controllers
+**** Utils 
+***** Config
+***** Logger
+***** encoders
+***** database
+***** healthcheck
+**** Test
+***** Unitários
+***** Integração
+***** Pytest 
+***** SQL na memória
+@endmindmap

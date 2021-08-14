@@ -20,12 +20,8 @@ setup: venv requirements-dev.txt
 	(\
 		clear; \
 		echo "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
-		echo " Start DEV environment"; \
+		echo " Start LOCAL environment"; \
 		echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
-		echo " Update pyenv and set local python version"; \
-		pyenv update; \
-		pyenv install -s 3.9.2; \
-		pyenv local 3.9.2; \
 		echo " Check if virtual environment exists or initiate"; \
 		if [ -d ./venv ]; \
 		then \
@@ -46,15 +42,29 @@ setup: venv requirements-dev.txt
 	)
 
 .PHONY: run
-run: venv requirements.txt
+run:
 	( \
+		source venv/bin/activate; \
 		clear; \
 		echo "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 		echo " Runinng APP"; \
 		echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 		. venv/bin/activate; \
 		clear ;\
-		. app/app.sh --reload; \
+		. app/app.sh; \
+	)
+
+.PHONY: reload
+reload:
+	( \
+		source venv/bin/activate; \
+		clear; \
+		echo "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
+		echo " Runinng APP"; \
+		echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
+		terminal -e . venv/bin/activate; \
+		clear ;\
+		. app/app_reload.sh --reload; \
 	)
 
 .PHONY: compose

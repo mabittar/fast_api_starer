@@ -8,52 +8,32 @@ import sys
 version = f"{sys.version_info.major}.{sys.version_info.minor}"
 
 
-    
-async def on_startup():
-    DBConnector.create_engine()
-    Logger().info(msg=f"STARTING...Using python version {version}")
+class App:
+    # def __init__(self, scope):
+    #     assert scope["type"] == "http"
+    #     self.scope = scope
+
+    async def on_startup(self):
+        DBConnector.create_engine()
+        Logger().info(msg=f"STARTING...Using python version {version}")
 
 
-async def on_shutdown():
-    DBConnector.close()
-    Logger.info(msg="shutting down...")
+    async def on_shutdown(self):
+        DBConnector.close()
+        Logger.info(msg="shutting down...")
 
 
 # Create your endpoints here
 
 
-def create() -> FastAPI:
-    api = FastAPIStarter.create(
-        title="FastAPI Fast Starter Project",
-        on_startup=[on_startup],
-        on_shutdown=[on_shutdown],
-    )
-
-    return api
-
-
-app = application = create()
-
-
-def __run(port: int):
-    host = environ.get("HOST", "0.0.0.0")
-    try:
-        run(
-            "main:app",
-            host=host,
-            port=port,
-            reload=True,
-            use_colors=True,
-            proxy_headers=True,
-            log_level="WARNING".lower(),
+    def create(self) -> FastAPI:
+        api = FastAPIStarter.create(
+            title="FastAPI Fast Starter Project",
+            on_startup=[self.on_startup],
+            on_shutdown=[self.on_shutdown],
         )
-    except Exception:
-        __run(port + 1)
+
+        return api
 
 
-if __name__ == "__main__":
-    from uvicorn import run
-    from os import environ
-
-    initial_port = int(environ.get("POST", "8000"))
-    __run(initial_port)
+app = App().create()
