@@ -10,10 +10,14 @@
             "request": "launch",
             "stopOnEntry": false,
             "python": "${workspaceRoot}/venv/bin/python",
-            "module": "gunicorn",
+            "module": "uvicorn",
             "args": [
-                "main:app",
                 "--reload",
+                "--host", "0.0.0.0",
+                "--port", "8000",
+                "--log-level", "debug",
+                "main:app",
+                
             ],
             "cwd": "${workspaceFolder}/app",
             "debugOptions": [
