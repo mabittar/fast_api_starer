@@ -9,21 +9,15 @@ version = f"{sys.version_info.major}.{sys.version_info.minor}"
 
 
 class App:
-    # def __init__(self, scope):
-    #     assert scope["type"] == "http"
-    #     self.scope = scope
 
     async def on_startup(self):
         DBConnector.create_engine()
-        Logger().info(msg=f"STARTING...Using python version {version}")
+        Logger().info(msg=f"STARTING...Using python version {version} and Uvicorn with Gunicorn")
 
 
     async def on_shutdown(self):
         DBConnector.close()
         Logger.info(msg="shutting down...")
-
-
-# Create your endpoints here
 
 
     def create(self) -> FastAPI:

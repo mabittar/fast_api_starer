@@ -4,6 +4,7 @@
 ** Python
 *** Por quê?
 *** Introdução
+*** Tipagem pydantic - validação de dados em runtime
 *** Corrotinas
 *** Paralelismo
 *** Herança e Polimorfismo (introdução)

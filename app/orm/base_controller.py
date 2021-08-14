@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
 
-class BaseController:
+class BaseORM:
     def __init__(self) -> None:
         self.session: Session = DBConnector.create_session()
 

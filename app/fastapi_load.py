@@ -1,5 +1,5 @@
 
-from framework.resources import router
+from routers.basic_router import router, example_endpoint
 from fastapi import FastAPI, Request
 from typing import Any, Callable, List, Optional, Sequence
 from starlette.responses import JSONResponse
@@ -25,6 +25,7 @@ class FastAPIStarter:
         )
 
         api.include_router(router)
+        api.include_router(example_endpoint)
 
         if middlewares:
             for middleware in middlewares[::-1]:
