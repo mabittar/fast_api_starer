@@ -1,9 +1,8 @@
 from starlette.responses import Response
-from utils.config import PROJECT_NAME
+from env_config import settings
 from os import getpid
 from typing import List
 from fastapi import APIRouter, Request
-from enum import Enum
 from pydantic import BaseModel, Field
 
 
@@ -23,7 +22,7 @@ router = APIRouter()
 )
 async def home(req: Request) -> StatusResponse:
     return StatusResponse(
-        service=PROJECT_NAME, id=getpid()
+        service=settings.project_name, id=getpid()
     )
 
 

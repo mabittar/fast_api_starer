@@ -3,21 +3,21 @@ from typing import List, Union
 from sqlalchemy.orm.query import Query
 from sqlalchemy.sql.operators import asc_op, desc_op
 from sqlalchemy.sql.schema import Column
-from ..orm.base_orm import BaseORM
-from pydantic import Base
+from orm.base_orm import BaseORM
+from pydantic import BaseModel
 
 
 class BaseController(BaseORM):
-    def __init__(self, model: Base):
+    def __init__(self, model: BaseModel):
         BaseORM.__init__(self)
         self.model = model
 
-    def add(self, data: Union[Base, List[Base]]) -> None:
+    def add(self, data: Union[BaseModel, List[BaseModel]]) -> None:
         if not isinstance(data, list):
             data = [data]
         self.session.add_all(data)
 
-    def delete(self, data: Base) -> None:
+    def delete(self, data: BaseModel) -> None:
         self.session.delete(data)
 
     def new_query(self) -> Query:
@@ -26,10 +26,10 @@ class BaseController(BaseORM):
     def lock(self, query: Query) -> Query:
         return query.with_for_update(of=self.model)
 
-    def get_first(self, query: Query) -> Base:
+    def get_first(self, query: Query) -> BaseModel:
         return query.first()
 
-    def get_all(self, query: Query) -> List[Base]:
+    def get_all(self, query: Query) -> List[BaseModel]:
         return query.all()
 
     @staticmethod

@@ -4,8 +4,7 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.engine import create_engine as _create_engine
 from sqlalchemy.orm import Session, scoped_session, sessionmaker
 from sqlalchemy.pool import QueuePool
-
-from utils.config import DATABASE_URL, DB_POOL_SIZE
+from env_config import settings
 
 
 class DBConnector:
@@ -14,8 +13,8 @@ class DBConnector:
     @classmethod
     def create_engine(cls) -> Engine:
         engine = _create_engine(
-            DATABASE_URL,
-            pool_size=DB_POOL_SIZE,
+            settings.bd_url,
+            pool_size=settings.db_pool_size,
             poolclass=QueuePool
         )
         return engine

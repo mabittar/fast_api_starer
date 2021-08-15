@@ -1,55 +1,49 @@
+from typing import List, Union
 from starlette.responses import JSONResponse
-from ..services.example_service import ExampleService
-from fastapi import APIRouter, Request, Response
-from ..orm.example_model import BaseClassExample
+from fastapi.exceptions import RequestValidationError
+from services.example_service import ExampleService
+from fastapi import APIRouter, Request, Response, HTTPException
+from orm.example_model import ExampleClassModel
 
 
-example_endpoint = APIRouter()
-controller = ExampleService()
+example_router = APIRouter()
+example_service = ExampleService()
 
-
-class UnicornException(Exception):
-    def __init__(self, name: str):
-        self.name = name
-
-
-@example_endpoint.exception_handler(UnicornException)
-async def unicorn_exception_handler(request: Request, exc: UnicornException):
-    return JSONResponse(
-        status_code=400,
-        content={
-            "message": f"Oops! {exc.name} some thing goes wrong, pleas check documentation."},
-    )
-
-@example_endpoint.get(
+@example_router.get(
     "/example_get",
-    response_model=BaseClassExample,
-    status_code=201,
+    response_model=Union[List[ExampleClassModel],
+                         ExampleClassModel],
+    status_code=200,
     tags=['basic example endpoint']
 )
-async def example_endpoint(req: Request, payload) -> Response:
+async def example_router(req: Request) -> Response:
     '''
     This is a endpoint to get BaseClassExample
 
     '''
+    payload = req.body()
     if payload is None:
-        raise UnicornException
+        raise HTTPException(status_code=404, detail=f"Oops! Payload cannot be null, please check documentation.")
     
-    return await controller.get_data(payload)
+    return await example_service.get_data(payload)
 
 
-@example_endpoint.post(
+@example_router.post(
     "/example_post",
-    response_model=BaseClassExample,
+    response_model=ExampleClassModel,
     status_code=201,
     tags=['basic example endpoint']
 )
-async def example_endpoint(req: Request, payload) -> Response:
+async def example_router(req: Request) -> Response:
     '''
     This is a endpoint to user BaseClassExample
 
     '''
+    payload = req.body()
     if payload is None:
-        raise UnicornException
+        raise HTTPException(
+            status_code=404, detail=f"Oops! Payload cannot be null, please check documentation.")
     
-    return await controller.create_example(payload)
+    response = example_service.create_example(payload)
+    
+    return await response

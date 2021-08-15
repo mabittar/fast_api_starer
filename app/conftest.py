@@ -1,4 +1,4 @@
-from app.orm.base_model import BaseModel
+from app.orm.base_orm import BaseORM
 import os
 from pathlib import Path
 from types import MethodType
@@ -17,7 +17,7 @@ def in_memory_db():
     engine = create_engine("sqlite:///:memory:",
                            execution_options=execution_options)
     # TODO update all models with constraints, to create tables here
-    BaseModel.metadata.create_all(engine)
+    BaseORM.metadata.create_all(engine)
 
     raw_cursor = engine.raw_connection()
     try:
@@ -68,7 +68,7 @@ def session(in_memory_db):
 def env():
     service_root = path.abspath(path.dirname(__file__))
     project_root = path.abspath(path.join(path.join(service_root, pardir)))
-    load_dotenv(dotenv_path="{}/local.env".format(project_root))
+    load_dotenv(dotenv_path=".../local.env".format(project_root))
 
 
 @pytest.fixture()
