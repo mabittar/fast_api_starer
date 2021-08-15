@@ -13,7 +13,7 @@ class DBConnector:
     @classmethod
     def create_engine(cls) -> Engine:
         engine = _create_engine(
-            settings.bd_url,
+            "sqlite:///./sql_app.db",
             pool_size=settings.db_pool_size,
             poolclass=QueuePool
         )

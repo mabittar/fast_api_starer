@@ -4,13 +4,14 @@ from routers.example_router import example_router
 from fastapi import FastAPI, Request
 from typing import Any, Callable, List, Optional, Sequence
 from starlette.responses import JSONResponse
+from env_config import settings
 
 
 class FastAPIStarter:
     @classmethod
     def create(
         cls,
-        title: str = None,
+        title: str = settings.project_name,
         middlewares: Optional[List] = None,
         on_startup: Optional[Sequence[Callable[[], Any]]] = None,
         on_shutdown: Optional[Sequence[Callable[[], Any]]] = None,
