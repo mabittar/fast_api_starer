@@ -19,6 +19,8 @@ class App:
         DBConnector.close()
         Logger.info(msg="shutting down...")
 
+    
+
     # add middlewares using create attr
     def create(self) -> FastAPI:
         api = FastAPIStarter.create(

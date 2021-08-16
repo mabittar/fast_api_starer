@@ -1,5 +1,5 @@
-from typing import List, Union
-
+from typing import Any, List, Tuple, Union
+from sqlalchemy import Column, or_, asc, desc
 from sqlalchemy.orm.query import Query
 from sqlalchemy.sql.operators import asc_op, desc_op
 from sqlalchemy.sql.schema import Column
@@ -34,18 +34,48 @@ class BaseController(BaseORM):
 
     @staticmethod
     def __asc(query: Query, column: Column) -> Query:
-        new_query = query.order_by(asc_op(column))
+        new_query = query.order_by(asc(column))
         return new_query
 
     @staticmethod
     def __desc(query: Query, column: Column) -> Query:
-        new_query = query.order_by(desc_op(column))
+        new_query = query.order_by(desc(column))
         return new_query
 
     @staticmethod
     def _order_by(query: Query, column: Column, order: str) -> Query:
         method = {
-            "asc": BaseORM.__asc,
-            "desc": BaseORM.__desc,
+            "asc": BaseController.__asc,
+            "desc": BaseController.__desc,
         }
         return method[order](query, column)
+
+    @staticmethod
+    def _filter_or(
+        query: Query, condition_tuple_list: List[Tuple[str, Column, Any]]
+    ) -> Query:
+        def build_condition(filter_type: str, column: Column, value):
+            if filter_type == "like":
+                if not isinstance(value, list):
+                    value = [value]
+                response = [column.like(f"%{single_value}%")
+                            for single_value in value]
+            else:
+                if not isinstance(value, list):
+                    value = [value]
+                response = [column.in_(value)]
+            return response
+
+        condition_list = []
+        for condition_tuple in condition_tuple_list:
+            condition_list.extend(
+                build_condition(
+                    filter_type=condition_tuple[0],
+                    column=condition_tuple[1],
+                    value=condition_tuple[2],
+                )
+            )
+
+        new_query = query.filter(or_(*condition_list))
+
+        return new_query

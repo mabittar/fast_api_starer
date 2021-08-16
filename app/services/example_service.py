@@ -13,17 +13,17 @@ class ExampleService:
         self.session = session if session is not None else Session
 
 
-    def get_data(self) -> Json:
-        if self.example_data is None:
-            raise HTTPException(
-                status_code=400,
-                detail="Example data can not be null."
-            )
-        
+    def get_data(self):
         example_controller = ExampleController(session=self.session)
-        example_data_model = example_controller.get(**self.example_data)
+        if self.example_data.get("first_result"):
+            example_data_model = example_controller.get(**self.example_data, first_result=True)
+        else:
+            example_data_model = example_controller.get(**self.example_data)
 
         return example_data_model.json()
 
     def create_example(self):
-        pass
+        example_controller = ExampleController(session=self.session)
+        example_data_model = example_controller.create(**self.example_data)
+
+        return example_data_model.json()

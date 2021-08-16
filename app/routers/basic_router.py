@@ -1,14 +1,12 @@
+from orm.status_response_model import StatusResponseModel
 from starlette.responses import Response
 from env_config import settings
 from os import getpid
 from typing import List
 from fastapi import APIRouter, Request
-from pydantic import BaseModel, Field
 
 
-class StatusResponse(BaseModel):
-    api: str = Field(..., description="API Name", example="entrance")
-    id: int = Field(..., description="Interface Id", example=123456)
+
 
 router = APIRouter()
 
@@ -17,11 +15,11 @@ router = APIRouter()
     "/",
     status_code=200,
     tags=["status"],
-    response_model=StatusResponse,
+    response_model=StatusResponseModel,
     description="Give some information about the running service",
 )
-async def home(req: Request) -> StatusResponse:
-    return StatusResponse(
+async def home(req: Request) -> StatusResponseModel:
+    return StatusResponseModel(
         service=settings.project_name, id=getpid()
     )
 

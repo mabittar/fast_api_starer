@@ -10,9 +10,8 @@ example_service = ExampleService()
 
 @example_router.get(
     "/example",
-    response_model=Union[List[ExampleClassModel],
-                         ExampleClassModel],
     status_code=200,
+    description="Use HTTPVerb GET to get example models",
     tags=['example model']
 )
 async def get_example_models(req: Request, internal_token: str = Header(...)) -> Response:
@@ -32,8 +31,8 @@ async def get_example_models(req: Request, internal_token: str = Header(...)) ->
 
 @example_router.post(
     "/example",
-    response_model=ExampleClassModel,
     status_code=201,
+    description="Use HTTPVerb POST to create example model",
     tags=['example model']
 )
 async def create_example_model(req: Request) -> Response:
