@@ -1,22 +1,32 @@
 from datetime import datetime
 from decimal import Decimal
 from typing import Union
+from enum import Enum
 import uuid
 from pydantic import BaseModel, Field
 from pydantic.networks import EmailStr
 import pydantic
+from pydantic.types import PositiveInt
 from utils.errors import OptionalNumbersError
+
+
+class Gender(str, Enum):
+    male = 'male'
+    female = 'female'
+    other = 'other',
+    not_given = 'not_given'
 
 class ExampleClassModel(BaseModel):
     '''Represents a basic model'''
     id: int = Field(int)
-    public_key: Union[int, str, uuid.UUID] = Field(default_factory=uuid.uuid4,
+    public_key: Union[int, str, uuid.UUID] = Field(default_factory=lambda: uuid.uuid4().hex, alias='public key',
                             description="String identification", example="UUID4")
-    name: str = Field(str, description="User name", example="John Lennon")
-    email: str = Field(EmailStr, max_length=200, description="User Email", example="john@beatles.com")
+    name: str = Field(str, alias="User Name", description="User name", example="John Lennon")
+    gender: Gender = Field(None, alias='Gender')
+    email: str = Field(EmailStr, max_length=200, alias='user email', description="User Email", example="john@beatles.com")
     float_number: float = Field(
         Decimal(), multiple_of=0.01, description="A float Number", example="1.1")
-    optional_integer: int = Field(
+    optional_integer: PositiveInt = Field(
         Decimal(), description="An optional integer", example="11")
     optional_float: float = Field(
         Decimal(), description="An optional float", example="0.12")
@@ -24,6 +34,9 @@ class ExampleClassModel(BaseModel):
     created_at: datetime = Field(
         default_factory=datetime.now)
     # domains: list = Field(list)
+
+    class Config: 
+        title = 'Exemple Model'
 
 
     @pydantic.root_validator(pre=True)
@@ -34,4 +47,3 @@ class ExampleClassModel(BaseModel):
                 title=values["title"],
                 message="Model must have one optional value"
             )
-        
