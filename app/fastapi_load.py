@@ -3,8 +3,8 @@ from routers.basic_router import router
 from routers.example_router import example_router
 from fastapi import FastAPI, Request
 from typing import Any, Callable, List, Optional, Sequence
-from starlette.responses import JSONResponse
 from env_config import settings
+from fastapi.middleware.cors import CORSMiddleware
 
 
 class FastAPIStarter:
@@ -32,6 +32,12 @@ class FastAPIStarter:
         if middlewares:
             for middleware in middlewares[::-1]:
                 api.add_middleware(middleware)
+        
+        api.add_middleware(
+            CORSMiddleware,
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],)
 
         return api
 
