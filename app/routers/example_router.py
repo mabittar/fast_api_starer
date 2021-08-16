@@ -44,7 +44,28 @@ async def create_example_model(req: Request) -> Response:
     if payload is None:
         raise HTTPException(
             status_code=404, detail=f"Oops! Payload cannot be null, please check documentation.")
-    
+
     response = example_service.create_example(payload)
-    
+
+    return await response
+
+
+@example_router.patch(
+    "/example",
+    status_code=201,
+    description="Use HTTPVerb PATCH to update example model",
+    tags=['example model']
+)
+async def update_example_model(req: Request) -> Response:
+    '''
+    This is a endpoint is used to update an existing Example Class Model
+
+    '''
+    payload = req.body()
+    if payload is None:
+        raise HTTPException(
+            status_code=404, detail=f"Oops! Payload cannot be null, please check documentation.")
+
+    response = example_service.update_example(payload)
+
     return await response

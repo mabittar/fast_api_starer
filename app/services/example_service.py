@@ -25,5 +25,20 @@ class ExampleService:
     def create_example(self):
         example_controller = ExampleController(session=self.session)
         example_data_model = example_controller.create(**self.example_data)
+        self.session.commit()
 
+        return example_data_model.json()
+
+    def create_example(self):
+        example_controller = ExampleController(session=self.session)
+
+        example_data_model_to_update = example_controller.get(
+            **self.example_data, first_result=True)
+
+
+        example_data_model = example_controller.update(
+            model=example_data_model_to_update, **self.example_data)
+
+            
+        self.session.commit()
         return example_data_model.json()

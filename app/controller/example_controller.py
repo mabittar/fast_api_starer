@@ -21,6 +21,7 @@ class ExampleController(BaseController):
 
         self.model.created_at = datetime.datetime.now()
         self.session.add(self.model)
+        self.session.flush()
 
         return self.model
 
@@ -28,6 +29,7 @@ class ExampleController(BaseController):
         self,
         model: ExampleClassModel,
         public_key: Optional[UUID4],
+        email: Optional[str],
         name: Optional[str],
         float_number: Optional[float],
         optional_integer: Optional[int],
@@ -40,6 +42,8 @@ class ExampleController(BaseController):
             self.model.public_key = public_key
         if name is not None:
             self.model.name = name
+        if email is not None:
+            self.model.email = email
         if float_number is not None:
             self.model.float_number = float_number
         if optional_float is not None:
@@ -52,6 +56,7 @@ class ExampleController(BaseController):
         self.model.updated_at = datetime.datetime.now()
 
         self.session.add(self.model)
+        self.session.flush()
 
         return self.model
 
