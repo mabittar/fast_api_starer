@@ -1,49 +1,22 @@
-from datetime import datetime
-from decimal import Decimal
-from typing import Union
-from enum import Enum
-import uuid
-from pydantic import BaseModel, Field
-from pydantic.networks import EmailStr
-import pydantic
-from pydantic.types import PositiveInt
-from utils.errors import OptionalNumbersError
+import datetime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, DateTime, String, DECIMAL, Enum, func
+
+Base = declarative_base()
 
 
-class Gender(str, Enum):
-    male = 'male'
-    female = 'female'
-    other = 'other',
-    not_given = 'not_given'
-
-class ExampleClassModel(BaseModel):
-    '''Represents a basic model'''
-    id: int = Field(int)
-    public_key: Union[int, str, uuid.UUID] = Field(default_factory=lambda: uuid.uuid4().hex, alias='public key',
-                            description="String identification", example="UUID4")
-    name: str = Field(str, alias="User Name", description="User name", example="John Lennon")
-    gender: Gender = Field(None, alias='Gender')
-    email: str = Field(EmailStr, max_length=200, alias='user email', description="User Email", example="john@beatles.com")
-    float_number: float = Field(
-        Decimal(), multiple_of=0.01, description="A float Number", example="1.1")
-    optional_integer: PositiveInt = Field(
-        Decimal(), description="An optional integer", example="11")
-    optional_float: float = Field(
-        Decimal(), description="An optional float", example="0.12")
-    updated_at: datetime = Field()
-    created_at: datetime = Field(
-        default_factory=datetime.now)
-    # domains: list = Field(list)
-
-    class Config: 
-        title = 'Exemple Model'
-
-
-    @pydantic.root_validator(pre=True)
-    @classmethod
-    def optional_numbers_must_be_null(cls, values):
-        if ("optional_integer" and "optional_float") not in values:
-            raise OptionalNumbersError(
-                title=values["title"],
-                message="Model must have one optional value"
-            )
+class ExampleClassModel(Base):
+    __tablename__ = 'BaseClass'
+    '''Represents a basic ORM model'''
+    id = Column(
+        Integer, primary_key=True, unique=True, index=True, autoincrement=True, nullable=False
+    )
+    public_key = Column(String(36), index=True, nullable=False)
+    name = Column(String(150), nullable=False)
+    gender = Column(Enum("male", "female", "other",
+                    "not_given"), nullable=False)
+    float_number = Column(DECIMAL(19, 2), nullable=False)
+    optional_integer = Column(Integer, nullable=True)
+    optional_float = Column(DECIMAL(19, 2), nullable=True)
+    updated_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)

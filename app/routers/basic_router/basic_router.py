@@ -1,4 +1,4 @@
-from orm.status_response_model import StatusResponseModel
+from .contract.status_contract import StatusResponseModel
 from starlette.responses import Response
 from env_config import settings
 from os import getpid
@@ -30,7 +30,7 @@ async def home(req: Request) -> StatusResponseModel:
     tags=["status"],
     description="Status Check",
 )
-async def health_check(req: Request) -> Response:
+async def health_check(req: Request) -> StatusResponseModel:
     return Response(status_code=200)
 
 

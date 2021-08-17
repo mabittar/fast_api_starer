@@ -1,5 +1,5 @@
 from typing import Optional
-
+from contextlib import contextmanager
 from sqlalchemy.engine import Engine
 from sqlalchemy.engine import create_engine as _create_engine
 from sqlalchemy.orm import Session, scoped_session, sessionmaker
@@ -8,16 +8,17 @@ from env_config import settings
 
 
 class DBConnector:
-    engine: Optional[Engine]
+    engine: Engine
+    Session: scoped_session
 
     @classmethod
-    def create_engine(cls) -> Engine:
-        engine = _create_engine(
-            "sqlite:///./sql_app.db",
+    def create_engine(cls):
+        cls.engine = _create_engine(
+            settings.db_url,
             pool_size=settings.db_pool_size,
             poolclass=QueuePool
         )
-        return engine
+        cls.Session = scoped_session(sessionmaker(bind=cls.engine))
 
     @classmethod
     def create_session(cls) -> Session:
@@ -27,7 +28,19 @@ class DBConnector:
         return session_class()
 
     @classmethod
-    def close(cls) -> None:
-        if cls.engine:
-            cls.engine.dispose()
-        cls.engine = None
+    def dispose_engine(cls):
+        cls.engine.dispose()
+
+
+    @classmethod
+    @contextmanager
+    def session_scope(cls):
+        """Provide a transactional scope around a series of operations."""
+        session = cls.Session()
+        try:
+            yield session
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
