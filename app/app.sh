@@ -20,9 +20,9 @@ fi
 ENV_CONFIG=${ENV_CONFIG:-$ENV_CONFIG}
 export ENV_CONFIG=${ENV_CONFIG:-$ENV_CONFIG}
 
-if [ ! -z ${UVICORN_WORKERS} ]; then WORKERS=${UVICORN_WORKERS}; fi
 
 export WORKER_CLASS=${WORKER_CLASS:-"uvicorn.workers.UvicornWorker"}
+
 pwd
 
 exec gunicorn -k "$WORKER_CLASS" -c "$ENV_CONFIG" "$APP_MODULE"

@@ -1,21 +1,20 @@
-from app.orm.base_orm import BaseORM
 import os
+from os import pardir, path
 from pathlib import Path
 from types import MethodType
 
 import pytest
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from os import path, pardir
-from dotenv import load_dotenv
+
+from app.orm.base_orm import BaseORM
 
 
 @pytest.fixture
 def in_memory_db():
-    execution_options = {"schema_translate_map": {
-        "pix_transfer": None, "glob": None}}
-    engine = create_engine("sqlite:///:memory:",
-                           execution_options=execution_options)
+    execution_options = {"schema_translate_map": {"pix_transfer": None, "glob": None}}
+    engine = create_engine("sqlite:///:memory:", execution_options=execution_options)
     # TODO update all models with constraints, to create tables here
     BaseORM.metadata.create_all(engine)
 
@@ -23,8 +22,7 @@ def in_memory_db():
     try:
         # TODO create sql script with test data
         with open(
-            Path(os.path.dirname(os.path.abspath(__file__))) /
-            "test_db_data.sql", "r"
+            Path(os.path.dirname(os.path.abspath(__file__))) / "test_db_data.sql", "r"
         ) as file:
             raw_cursor.executescript(file.read())
     except FileNotFoundError:

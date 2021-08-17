@@ -1,17 +1,24 @@
-SHELL := /bin/bash
+SHELL := bash
+.ONESHELL:
+.SHELLFLAGS := -eu -o pipefail -c
+.DELETE_ON_ERROR:
+MAKEFLAGS += --warn-undefined-variables
+MAKEFLAGS += --no-builtin-rules
 PROJECT=FastAPI_starer
 OS = $(shell uname -s)
 
 # Print usage of main targets when user types "make" or "make help"
 .PHONY: help
 help:
-	echo "Please choose one of the following targets: \n"\
+	echo "Please choose one of the following targets:"\
 	      "    setup: Setup your development environment and install dependencies\n"\
-	      "    run: Run app\n"\
-	      "    compose: Activate docker compose\n"\
-	      "    compose-up: Docker-up\n"\
-	      "    compose-build: Docker build App Image\n"\
-	      "\n"\
+	      "    run: Run app"\
+		  "	   reload: Run app using reload mode"
+		  "	   lint: Lint file"\
+	      "    compose: Activate docker compose"\
+	      "    compose-up: Docker-up"\
+	      "    compose-build: Docker build App Image"\
+	      ""\
 	      "View the Makefile for more documentation about all of the available commands"
 	@exit 2
 
@@ -49,8 +56,6 @@ run:
 		echo "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 		echo " Runinng APP"; \
 		echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
-		. venv/bin/activate; \
-		clear ;\
 		. app/app.sh; \
 	)
 
@@ -62,9 +67,19 @@ reload:
 		echo "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 		echo " Runinng APP"; \
 		echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
-		terminal -e . venv/bin/activate; \
-		clear ;\
 		. app/app_reload.sh --reload; \
+	)
+
+.PHONY: lint
+lint:
+	( \
+		source venv/bin/activate; \
+		clear; \
+		echo "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
+		echo " Linting APP"; \
+		echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
+		black --check .; \
+		isort --recursive  --force-single-line-imports --line-width 88 --apply .; \
 	)
 
 .PHONY: compose
@@ -94,3 +109,4 @@ build:
 		build --parallel \
 		--build-arg; \
 	)
+

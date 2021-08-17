@@ -1,7 +1,6 @@
 import datetime
 import json
 import logging
-import os
 import sys
 
 from utils.encoder import Encoder
@@ -97,8 +96,10 @@ class Formatter(logging.Formatter):
             message_dict=payload.get("message_dict"),
             message=payload.get("message"),
             timestamp=str(
-                datetime.datetime.now(datetime.timezone(offset=datetime.timedelta(hours=-3)))
+                datetime.datetime.now(
+                    datetime.timezone(offset=datetime.timedelta(hours=-3))
                 )
-            )
+            ),
+        )
 
         return json.dumps(log_status)

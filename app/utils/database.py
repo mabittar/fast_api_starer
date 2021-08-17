@@ -1,10 +1,10 @@
-from typing import Optional
 from contextlib import contextmanager
+
+from env_config import settings
 from sqlalchemy.engine import Engine
 from sqlalchemy.engine import create_engine as _create_engine
 from sqlalchemy.orm import Session, scoped_session, sessionmaker
 from sqlalchemy.pool import QueuePool
-from env_config import settings
 
 
 class DBConnector:
@@ -14,9 +14,7 @@ class DBConnector:
     @classmethod
     def create_engine(cls):
         cls.engine = _create_engine(
-            settings.db_url,
-            pool_size=settings.db_pool_size,
-            poolclass=QueuePool
+            settings.db_url, pool_size=settings.db_pool_size, poolclass=QueuePool
         )
         cls.Session = scoped_session(sessionmaker(bind=cls.engine))
 
@@ -30,7 +28,6 @@ class DBConnector:
     @classmethod
     def dispose_engine(cls):
         cls.engine.dispose()
-
 
     @classmethod
     @contextmanager

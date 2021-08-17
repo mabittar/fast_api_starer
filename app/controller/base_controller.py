@@ -1,10 +1,10 @@
 from typing import Any, List, Tuple, Union
-from sqlalchemy import Column, or_, asc, desc
-from sqlalchemy.orm.query import Query
-from sqlalchemy.sql.operators import asc_op, desc_op
-from sqlalchemy.sql.schema import Column
+
 from orm.base_orm import BaseORM
 from pydantic import BaseModel
+from sqlalchemy import Column, asc, desc, or_
+from sqlalchemy.orm.query import Query
+from sqlalchemy.sql.schema import Column
 
 
 class BaseController(BaseORM):
@@ -58,8 +58,7 @@ class BaseController(BaseORM):
             if filter_type == "like":
                 if not isinstance(value, list):
                     value = [value]
-                response = [column.like(f"%{single_value}%")
-                            for single_value in value]
+                response = [column.like(f"%{single_value}%") for single_value in value]
             else:
                 if not isinstance(value, list):
                     value = [value]

@@ -1,25 +1,24 @@
+import sys
+
+from env_config import settings
+from fastapi import FastAPI
+from fastapi_load import FastAPIStarter
 from utils.database import DBConnector
 from utils.logger import Logger
-from fastapi_load import FastAPIStarter
-from fastapi import FastAPI
-from env_config import settings
-import sys
 
 version = f"{sys.version_info.major}.{sys.version_info.minor}"
 
 
 class App:
-
     async def on_startup(self):
         DBConnector.create_engine()
-        Logger().info(msg=f"{settings.project_name} STARTING...Using python version {version} and Uvicorn with Gunicorn")
-
+        Logger().info(
+            msg=f"{settings.project_name} STARTING...Using python version {version} and Uvicorn with Gunicorn"
+        )
 
     async def on_shutdown(self):
         DBConnector.close()
         Logger.info(msg="shutting down...")
-
-    
 
     # add middlewares using create attr
     def create(self) -> FastAPI:
@@ -33,6 +32,3 @@ class App:
 
 
 app = App().create()
-
-
-

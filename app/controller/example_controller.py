@@ -1,21 +1,16 @@
-
-
 from datetime import datetime
 from typing import List, Optional, Union
 
-from pydantic.types import UUID4
-from orm.example_model import ExampleClassModel
 from controller.base_controller import BaseController
+from orm.example_model import ExampleClassModel
+from pydantic.types import UUID4
 
 
 class ExampleController(BaseController):
     def __init__(self, session):
         self.session = session
 
-    def create(
-        self,
-        data
-    ) -> ExampleClassModel:
+    def create(self, data) -> ExampleClassModel:
 
         self.model = ExampleClassModel(**data)
 
@@ -34,7 +29,7 @@ class ExampleController(BaseController):
         float_number: Optional[float],
         optional_integer: Optional[int],
         optional_float: Optional[float],
-        domains: Optional[dict]
+        domains: Optional[dict],
     ) -> ExampleClassModel:
 
         self.model = model
@@ -60,7 +55,6 @@ class ExampleController(BaseController):
 
         return self.model
 
-
     def get(
         self,
         example_id: Optional[int],
@@ -73,12 +67,10 @@ class ExampleController(BaseController):
         page_number: Optional[int] = None,
         page_size: Optional[int] = None,
         order_by: Optional[str] = None,
-
-        
     ) -> Union[List[ExampleClassModel], ExampleClassModel]:
 
         query = self.new_query(ExampleClassModel)
-        
+
         if example_id is not None:
             query = query.filter(ExampleClassModel.id == example_id)
 
@@ -103,18 +95,14 @@ class ExampleController(BaseController):
             elif order_by == "name_desc":
                 query = query.order_by(__desc(ExampleClassModel.name))
             elif order_by == "float_desc":
-                query = query.order_by(
-                    __desc(ExampleClassModel.float_number))
+                query = query.order_by(__desc(ExampleClassModel.float_number))
             elif order_by == "float_asc":
-                query = query.order_by(
-                    __asc(ExampleClassModel.float_number))
+                query = query.order_by(__asc(ExampleClassModel.float_number))
             elif order_by == "created_at_asc":
                 query = query.order_by(__asc(ExampleClassModel.created_at))
             else:
                 query = query.order_by(__desc(ExampleClassModel.created_at))
-            query = query.limit(page_size).offset(
-                (page_number - 1) * page_size)
-
+            query = query.limit(page_size).offset((page_number - 1) * page_size)
 
         result = query.first() if first_result else query.all()
 

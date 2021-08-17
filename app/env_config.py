@@ -1,15 +1,13 @@
 import json
 import multiprocessing
 import os
+
 from dotenv.main import load_dotenv
 from pydantic import BaseSettings, Field
 
-
-
-
 workers_per_core_str = os.getenv("WORKERS_PER_CORE", "1")
-max_workers_str = os.getenv("MAX_WORKERS", 1)
-use_max_workers = True
+max_workers_str = os.getenv("MAX_WORKERS")
+use_max_workers = None
 if max_workers_str:
     use_max_workers = int(max_workers_str)
 web_concurrency_str = os.getenv("WEB_CONCURRENCY", None)
@@ -17,7 +15,7 @@ web_concurrency_str = os.getenv("WEB_CONCURRENCY", None)
 host = os.getenv("HOST", "0.0.0.0")
 port = os.getenv("PORT", "8000")
 bind_env = os.getenv("BIND", None)
-use_loglevel = os.getenv("LOG_LEVEL", "warning")
+use_loglevel = os.getenv("LOG_LEVEL", "info")
 if bind_env:
     use_bind = bind_env
 else:
@@ -59,14 +57,14 @@ project_root = os.path.abspath(os.path.join(service_root, os.pardir))
 
 class DbSettings(BaseSettings):
     load_dotenv(dotenv_path=".../local.env".format(project_root))
-    bd_host: str = Field(env='db_host')
-    db_port: int = Field(default=3360, env='db_port')
-    db_pool_size: int = Field(default='-1', env='db_pool_size')
-    db_url: str = Field(default="sqlite:///./sql_app.db", env='db_url')
-    project_name: str = Field(default="fastapi_starter", env='project_name')
+    bd_host: str = Field(env="db_host")
+    db_port: int = Field(default=3360, env="db_port")
+    db_pool_size: int = Field(default="-1", env="db_pool_size")
+    db_url: str = Field(default="sqlite:///./sql_app.db", env="db_url")
+    project_name: str = Field(default="fastapi_starter", env="project_name")
 
 
-settings = DbSettings(_env_file='../local.env')
+settings = DbSettings(_env_file="../local.env")
 
 # For debugging and testing
 log_data = {
@@ -85,14 +83,14 @@ log_data = {
     "port": port,
 }
 
-db_path = f'{settings.bd_host}:{settings.db_port}'
-project_path = f'project_root'
+db_path = f"{settings.bd_host}:{settings.db_port}"
+project_path = f"project_root"
 db_data = dict(
     project_name=settings.project_name,
     project_path=project_path,
     db_url=settings.db_url,
     db_path=db_path,
-    db_pool_size=settings.db_pool_size
+    db_pool_size=settings.db_pool_size,
 )
 
 print(json.dumps(log_data))

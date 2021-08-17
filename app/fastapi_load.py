@@ -1,13 +1,9 @@
-from starlette.requests import Request
-from starlette.responses import JSONResponse
-from routers.example_router.example_router import example_router
-from routers.basic_router.basic_router import router
-from fastapi import FastAPI
 from typing import Any, Callable, List, Optional, Sequence
-from env_config import settings
-from fastapi.middleware.cors import CORSMiddleware
 
-from utils.logger import Logger
+from env_config import settings
+from fastapi import FastAPI
+from routers.basic_router.basic_router import router
+from routers.example_router.example_router import example_router
 
 
 class FastAPIStarter:
@@ -29,15 +25,11 @@ class FastAPIStarter:
             on_shutdown=on_shutdown,
         )
 
-
         api.include_router(router)
         api.include_router(example_router)
 
         if middlewares:
             for middleware in middlewares[::-1]:
                 api.add_middleware(middleware)
-        
 
         return api
-
-

@@ -1,12 +1,11 @@
-from .contract.status_contract import StatusResponseModel
-from starlette.responses import Response
-from env_config import settings
 from os import getpid
 from typing import List
+
+from env_config import settings
 from fastapi import APIRouter, Request
+from starlette.responses import Response
 
-
-
+from .contract.status_contract import StatusResponseModel
 
 router = APIRouter()
 
@@ -19,9 +18,7 @@ router = APIRouter()
     description="Give some information about the running service",
 )
 async def home(req: Request) -> StatusResponseModel:
-    return StatusResponseModel(
-        service=settings.project_name, id=getpid()
-    )
+    return StatusResponseModel(service=settings.project_name, id=getpid())
 
 
 @router.get(
@@ -39,6 +36,5 @@ async def health_check(req: Request) -> StatusResponseModel:
 )
 async def get_all_routes(req: Request) -> List[str]:
     # Using FastAPI instance
-    url_list = [{"path": route.path, "name": route.name}
-                for route in req.app.routes]
+    url_list = [{"path": route.path, "name": route.name} for route in req.app.routes]
     return url_list
