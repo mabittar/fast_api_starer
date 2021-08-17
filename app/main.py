@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi_load import FastAPIStarter
 from utils.database import DBConnector
 from utils.logger import Logger
+from middleware import custom_middlewares_list
 
 version = f"{sys.version_info.major}.{sys.version_info.minor}"
 
@@ -20,10 +21,11 @@ class App:
         DBConnector.close()
         Logger.info(msg="shutting down...")
 
-    # add middlewares using create attr
+
     def create(self) -> FastAPI:
-        api = FastAPIStarter.create(
+        api = FastAPIStarter.start_up(
             title="FastAPI Fast Starter Project",
+            middlewares=custom_middlewares_list,
             on_startup=[self.on_startup],
             on_shutdown=[self.on_shutdown],
         )

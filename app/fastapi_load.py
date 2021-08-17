@@ -8,7 +8,7 @@ from routers.example_router.example_router import example_router
 
 class FastAPIStarter:
     @classmethod
-    def create(
+    def start_up(
         cls,
         title: str = settings.project_name,
         middlewares: Optional[List] = None,

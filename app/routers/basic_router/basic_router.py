@@ -1,6 +1,6 @@
 from os import getpid
 from typing import List
-
+import sys
 from env_config import settings
 from fastapi import APIRouter, Request
 from starlette.responses import Response
@@ -17,8 +17,13 @@ router = APIRouter()
     response_model=StatusResponseModel,
     description="Give some information about the running service",
 )
+
 async def home(req: Request) -> StatusResponseModel:
-    return StatusResponseModel(service=settings.project_name, id=getpid())
+    version = f"{sys.version_info.major}.{sys.version_info.minor}"
+    message = f"Welcome to FaseAPI Starter! From Uvicorn with Gunicorn. Using Python {version}".encode(
+        "utf-8"
+    )
+    return StatusResponseModel(service=settings.project_name, id=getpid(), message=message)
 
 
 @router.get(
