@@ -7,8 +7,9 @@ MAKEFLAGS += --no-builtin-rules
 PROJECT=FastAPI_starer
 OS = $(shell uname -s)
 
+
 # Print usage of main targets when user types "make" or "make help"
-.PHONY: help
+
 help:
 	echo "Please choose one of the following targets:"\
 	      "    setup: Setup your development environment and install dependencies\n"\
@@ -21,8 +22,9 @@ help:
 	      ""\
 	      "View the Makefile for more documentation about all of the available commands"
 	@exit 2
+.PHONY: help
 
-.PHONY: setup
+
 setup: venv requirements-dev.txt
 	(\
 		clear; \
@@ -47,8 +49,7 @@ setup: venv requirements-dev.txt
 		echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 		pip install -r requirements-dev.txt; \
 	)
-
-.PHONY: run
+.PHONY: setup
 run:
 	( \
 		source venv/bin/activate; \
@@ -58,8 +59,8 @@ run:
 		echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 		. app/app.sh; \
 	)
+.PHONY: run
 
-.PHONY: reload
 reload:
 	( \
 		source venv/bin/activate; \
@@ -69,8 +70,8 @@ reload:
 		echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 		. app/app_reload.sh --reload; \
 	)
+.PHONY: reload
 
-.PHONY: lint
 lint:
 	( \
 		source venv/bin/activate; \
@@ -81,32 +82,37 @@ lint:
 		black --check .; \
 		isort --recursive  --force-single-line-imports --line-width 88 --apply .; \
 	)
+.PHONY: lint
 
-.PHONY: compose
 compose: compose-build
 	clear; \
 	echo "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 	echo " Starting containerized environment"; \
 	echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 	docker -compose -f ./container/local.docker-compose.yml up; \
+.PHONY: compose
 
-.PHONY: compose-up
 compose-up: compose-build
 	docker -compose -f container/local.docker-compose.yml up
+.PHONY: compose-up
 
-.PHONY: compose-down
 compose-down:
 	docker -compose -f container/local.docker-compose.yml down
+.PHONY: compose-down
 
-.PHONY: build
 build:
 	( \
 		clear; \
 		echo "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 		echo " Building containers... "; \
 		echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
+		out/image-id: $(shell find app -type f)
+		image_id="fastapi:$$(pwgen -1)"
 		docker -compose -f container/local.docker-compose.yml \
 		build --parallel \
-		--build-arg; \
+		--build-arg \
+		--tag="$${image_id}" \
+		echo "$${image_id}" out/image-id; \
 	)
+.PHONY: build
 
