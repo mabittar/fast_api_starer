@@ -6,8 +6,7 @@ from fastapi_load import FastAPIStarter
 from utils.database import DBConnector
 from utils.logger import Logger
 from middlewares import custom_middlewares_list
-from routers.basic_router.basic_router import router
-from routers.example_router.example_router import example_router
+from routers import routers_list
 
 version = f"{sys.version_info.major}.{sys.version_info.minor}"
 
@@ -23,11 +22,12 @@ class App:
         DBConnector.close()
         Logger.info(msg="shutting down...")
 
-    # add new endpoints to routers
+    # add new endpoints to init routers_list
+    # add new middlewares to init middlewares
     def create(self) -> FastAPI:
         api = FastAPIStarter.start_up(
             title="FastAPI Fast Starter Project",
-            routers=[router, example_router],
+            routers=routers_list,
             middlewares=custom_middlewares_list,
             on_startup=[self.on_startup],
             on_shutdown=[self.on_shutdown],

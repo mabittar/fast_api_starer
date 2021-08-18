@@ -25,9 +25,6 @@ async def get_example_models(
     This is a endpoint is used to get Example Class Model
 
     """
-    # if internal_token != "example_secret_token":
-    #     raise HTTPException(
-    #         status_code=400, detail="Oops! Internal Token on header is invalid.")
 
     if example_item is None:
         raise HTTPException(

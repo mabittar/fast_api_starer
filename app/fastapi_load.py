@@ -2,8 +2,6 @@ from typing import Any, Callable, List, Optional, Sequence
 
 from env_config import settings
 from fastapi import FastAPI
-from routers.basic_router.basic_router import router
-from routers.example_router.example_router import example_router
 
 
 class FastAPIStarter:
