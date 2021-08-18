@@ -3,7 +3,7 @@
 
 A multiple project start using FastAPI
 
-'a chef always sharpens his own knives'
+'A chef always sharpens his own knives'
 
 ## How to use
 0. make sure pyenv is configured in your system

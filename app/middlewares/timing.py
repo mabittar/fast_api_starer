@@ -1,14 +1,14 @@
-from fastapi import Request, Response
-from starlette.responses import StreamingResponse
-from middleware.base import BaseMiddleware
-import datetime
+from middlewares.base import BaseMiddleware
 from utils.logger import Logger
+import datetime
+from fastapi import Request, Response
 
 
 class Timing(BaseMiddleware):
     @staticmethod
     async def process_request(request: Request) -> Request:
         request.state.start_time = datetime.datetime.now()
+        
         Logger().info(
             msg=f'INCOMING REQUEST: {request.method.upper()} {request.url.path}',
             method=request.method.upper(),
@@ -18,16 +18,20 @@ class Timing(BaseMiddleware):
         return request
 
     @staticmethod
-    async def process_response(request: Request, response: StreamingResponse) -> Response:
-        took = round(
-            (datetime.datetime.now() - request.state.start_time).total_seconds() * 1000, 2)
+    async def process_response(request: Request, response: Response):
+        start_time = datetime.datetime.now()
 
+        process_time = round(
+            (datetime.datetime.now() - request.state.start_time).total_seconds() * 1000, 3)
+        response.headers["Process Time"] = str(process_time)
         Logger().info(
-            msg=f'OUTGOING RESPONSE: {request.method.upper()} {request.url.path} status_code: {response.status_code} took {took} ms',
+            msg=f'Process Time: {request.method.upper()} {request.url.path} status_code: {response.status_code} took {process_time} ms',
             method=request.method.upper(),
             endpoint=request.url.path,
             ip_address=request.client.host,
             status=response.status_code,
-            took=int(round(took, 0)),
+            took=int(round(process_time, 0)),
         )
+
         return response
+
