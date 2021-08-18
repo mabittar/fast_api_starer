@@ -7,7 +7,7 @@ from typing import Optional, Union
 import pydantic
 from pydantic import BaseModel, Field
 from pydantic.networks import EmailStr
-from pydantic.types import PositiveInt
+from pydantic.types import PositiveInt, condecimal, conint
 from utils.errors import OptionalNumbersError
 
 
@@ -35,17 +35,19 @@ class ExampleClassRequest(BaseModel):
     email: EmailStr = Field(
         ..., alias="user email", description="User Email", example="john@beatles.com"
     )
-    float_number: Decimal = Field(
+    float_number: condecimal    (max_digits=18, decimal_places=2) = Field(
         ..., multiple_of=0.01, description="A float Number", example="1.11"
     )
     optional_integer: Optional[PositiveInt] = Field(
         None, description="An optional integer", example="11"
     )
-    optional_float: Optional[Decimal] = Field(
+    optional_float: Optional[condecimal(max_digits=18, decimal_places=2)] = Field(
         None, description="An optional float", example="0.12"
     )
     updated_at: Optional[datetime] = None
     created_at: datetime = Field(default_factory=datetime.now)
+    page: Optional[conint(ge=1, le=999)] = 1
+    max_pagination: Optional[conint(ge=1, le=999)] = 100
 
     class Config:
         title = "Exemple Model"
@@ -74,13 +76,14 @@ class ExampleClassResponse(BaseModel):
     id: int
     public_key: Union[int, str, uuid.UUID]
     name: str
-    gender: Gender = Field(..., alias="Gender")
+    gender: Gender
     email: str
-    float_number: float
-    optional_integer: Optional[PositiveInt] = 1
-    optional_float: Optional[Decimal] = 0.0
-    output_optional: Optional[Decimal] = None
-    updated_at: Optional[datetime] = None
+    float_number: condecimal(max_digits=18, decimal_places=2)
+    optional_integer: Optional[PositiveInt]
+    optional_float: Optional[condecimal(max_digits=18, decimal_places=2)]
+    output_optional: Optional[condecimal(
+        max_digits=18, decimal_places=2)]
+    updated_at: Optional[datetime]
     created_at: datetime
-    page: Optional[int] = 1
-    max_pagination: Optional[int] = 10
+    page: Optional[int]
+    max_pagination: Optional[int]
