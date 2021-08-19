@@ -20,4 +20,4 @@ ENV PYTHONPATH=/app
 
 
 
-CMD [ "python", "-B", "main.py"  "--port", "8000"]
+CMD [app.sh]

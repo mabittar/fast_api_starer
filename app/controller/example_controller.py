@@ -12,7 +12,7 @@ class ExampleController(BaseController):
 
     def create(self, data) -> ExampleClassModel:
 
-        self.model = ExampleClassModel(**data)
+        self.model = ExampleClassModel(data)
 
         self.model.created_at = datetime.datetime.now()
         self.session.add(self.model)

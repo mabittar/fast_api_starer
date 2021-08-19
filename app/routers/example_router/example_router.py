@@ -32,8 +32,9 @@ async def get_example_models(
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
     with DBConnector.session_scope() as session:
-        example_service = ExampleService(session=session)
-        example_model = example_service.get_data(example_item, page, max_pagination)
+        example_service = ExampleService(
+            session=session, example_data=example_item)
+        example_model = example_service.get_data(page, max_pagination)
 
         return await example_model
 
@@ -50,14 +51,16 @@ async def create_example_model(req: Request, example_item: ExampleClassRequest):
     This is a endpoint is used to post new Example Class Model
 
     """
+    
     if example_item is None:
         raise HTTPException(
             status_code=404,
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
     with DBConnector.session_scope() as session:
-        example_service = ExampleService(session=session)
-        new_item_model = example_service.create_example(example_item)
+        example_service = ExampleService(
+            session=session, example_data=example_item)
+        new_item_model = example_service.create_example()
 
         return await new_item_model
 

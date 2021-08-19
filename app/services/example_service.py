@@ -2,6 +2,7 @@ from typing import Optional
 
 from controller.example_controller import ExampleController
 from sqlalchemy.orm.session import Session
+from controller.point_controller import PointController
 from utils.logger import Logger
 
 
@@ -39,8 +40,12 @@ class ExampleService:
         return example_data_model.json()
 
     def create_example(self):
+        point_controller = PointController(session=self.session)
+        point_data = self.example_data.point
+        point_model = point_controller.create(point_data)
+        self.example_data.point = point_model
         example_controller = ExampleController(session=self.session)
-        example_data_model = example_controller.create(**self.example_data)
+        example_data_model = example_controller.create(self.example_data)
         self.session.commit()
 
         example_data_model.output_optional = (
@@ -49,7 +54,11 @@ class ExampleService:
 
         return example_data_model.json()
 
-    def create_example(self):
+    def update_example(self):
+        point_controller = PointController(session=self.session)
+        point_data = self.example_data.get("point")
+        point_model = point_controller.create(**point_data)
+        self.example_data.point = point_model
         example_controller = ExampleController(session=self.session)
 
         example_data_model_to_update = example_controller.get(

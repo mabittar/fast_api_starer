@@ -19,6 +19,7 @@ class App:
         )
 
     async def on_shutdown(self):
+
         DBConnector.close()
         Logger.info(msg="shutting down...")
 
