@@ -1,15 +1,15 @@
 from typing import Any, List, Tuple, Union
 
-from orm.base_orm import BaseORM
+from orm.base_orm import BaseCRUD
 from pydantic import BaseModel
 from sqlalchemy import Column, asc, desc, or_
 from sqlalchemy.orm.query import Query
 from sqlalchemy.sql.schema import Column
 
 
-class BaseController(BaseORM):
+class CRUDController(BaseCRUD):
     def __init__(self, model: BaseModel):
-        BaseORM.__init__(self)
+        BaseCRUD.__init__(self)
         self.model = model
 
     def add(self, data: Union[BaseModel, List[BaseModel]]) -> None:
@@ -45,8 +45,8 @@ class BaseController(BaseORM):
     @staticmethod
     def _order_by(query: Query, column: Column, order: str) -> Query:
         method = {
-            "asc": BaseController.__asc,
-            "desc": BaseController.__desc,
+            "asc": CRUDController.__asc,
+            "desc": CRUDController.__desc,
         }
         return method[order](query, column)
 

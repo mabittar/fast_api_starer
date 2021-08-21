@@ -1,8 +1,9 @@
 
 from pydantic import BaseModel, Field
 
+from model.common import IDModelMixin
 
-class StatusResponseModel(BaseModel):
+
+class StatusResponseModel(IDModelMixin):
     api: str = Field(..., description="API Name", example="FastAPI starter")
-    id: int = Field(..., description="Interface Id", example=123456)
     msg: str = Field(..., description="Test Message", example="Welcome")

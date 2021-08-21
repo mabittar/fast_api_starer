@@ -1,15 +1,15 @@
-from typing import List, Union
+from typing import List, Optional, Union
 
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from utils.database import DBConnector
 
 
-class BaseORM:
+class BaseCRUD:
     def __init__(self) -> None:
         self.session: Session = DBConnector.create_session()
 
-    def add(self, obj: Union[BaseModel, List[BaseModel]]) -> None:
+    def add(self, obj: Union[BaseModel, List[BaseModel]]) -> Optional[Union[BaseModel, List[BaseModel]]]:
         if isinstance(obj, list):
             self.session.add_all(obj)
         else:

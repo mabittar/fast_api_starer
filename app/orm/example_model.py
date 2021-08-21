@@ -10,7 +10,7 @@ Base = declarative_base()
 class ExampleClassModel(Base):
     __tablename__ = "BaseClass"
     """Represents a basic ORM model"""
-    id = Column(
+    example_id = Column(
         Integer,
         primary_key=True,
         unique=True,

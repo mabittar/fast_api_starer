@@ -5,7 +5,7 @@ from env_config import settings
 from fastapi import APIRouter, Request
 from starlette.responses import Response
 
-from .contract.status_contract import StatusResponseModel
+from model.contracts.status_contract import StatusResponseModel
 
 router = APIRouter()
 

@@ -1,18 +1,17 @@
+from sqlalchemy.orm.session import Session
 from orm.point_model import PointModel
 
-from controller.base_controller import BaseController
+from controller.base_controller import CRUDController
 
 
-class PointController(BaseController):
-    def __init__(self, session):
+class PointController(CRUDController):
+    def __init__(self, session: Session) -> None:
+        super().__init__(model=PointModel)
         self.session = session
 
-    def create(self, data) -> PointModel:
+    async def create(self, model: PointModel) -> PointModel:
 
-        self.model.x = data.x
-        self.model.y = data.y
-
-        self.session.add(self.model)
+        self.session.add(model)
         self.session.flush()
 
-        return self.model
+        return model

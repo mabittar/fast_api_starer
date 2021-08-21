@@ -18,12 +18,15 @@ class ExampleService:
         self.session = session if session is not None else Session
 
     def get_data(
-        self, page: Optional[int] = None, max_pagination: Optional[int] = None
+        self, 
+        page: Optional[int] = None, 
+        max_pagination: Optional[int] = None,
+        first_result: Optional[bool] = False
     ):
         example_controller = ExampleController(session=self.session)
         if self.example_data.get("first_result"):
             example_data_model = example_controller.get(
-                **self.example_data, first_result=True
+                **self.example_data, first_result=first_result
             )
 
         elif page and max_pagination:
@@ -33,11 +36,12 @@ class ExampleService:
         else:
             example_data_model = example_controller.get(**self.example_data)
 
-        example_data_model.output_optional = (
-            example_data_model.optional_integer / example_data_model.optional_float
-        )
+        # if example_data_model.optional_float and example_data_model.optional_integer:
+        #     output_optional = example_data_model.optional_float * \
+        #         example_data_model.optional_integer
+        #     example_data_model.output_optional = output_optional
 
-        return example_data_model.json()
+        return example_data_model
 
     def create_example(self):
         point_controller = PointController(session=self.session)
@@ -45,16 +49,19 @@ class ExampleService:
         point_model = point_controller.create(point_data)
         self.example_data.point = point_model
         example_controller = ExampleController(session=self.session)
-        example_data_model = example_controller.create(self.example_data)
-        self.session.commit()
+        example_data_model = example_controller.create(
+            self.example_data)
 
-        example_data_model.output_optional = (
-            example_data_model.optional_integer / example_data_model.optional_float
-        )
 
-        return example_data_model.json()
+        # if example_data_model.optional_float and example_data_model.optional_integer:
+        #     output_optional = example_data_model.optional_float * \
+        #         example_data_model.optional_integer
+        #     example_data_model.output_optional = output_optional
 
-    def update_example(self):
+        # self.session.commit()
+        return example_data_model
+
+    def update_example(self, example_id):
         point_controller = PointController(session=self.session)
         point_data = self.example_data.get("point")
         point_model = point_controller.create(**point_data)
@@ -62,15 +69,21 @@ class ExampleService:
         example_controller = ExampleController(session=self.session)
 
         example_data_model_to_update = example_controller.get(
-            **self.example_data, first_result=True
+            example_id, first_result=True
         )
 
         example_data_model = example_controller.update(
             model=example_data_model_to_update, **self.example_data
         )
+        
         self.session.commit()
-
-        example_data_model.output_optional = (
-            example_data_model.optional_integer / example_data_model.optional_float
-        )
         return example_data_model.json()
+
+    def get_data_by_id(
+        self,
+        example_id,
+    ):
+        example_controller = ExampleController(session=self.session)
+        example_data_model = example_controller.get(example_id=example_id)
+
+        return example_data_model
