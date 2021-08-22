@@ -2,13 +2,14 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 import pydantic
-from model.common import DateTimeModelMixin, IDModelMixin
-from pydantic import BaseModel, Field
+from model.common import DateTimeModelMixin, IDModelMixin, Pagination
+from pydantic import Field
 from pydantic.networks import EmailStr
-from pydantic.types import PositiveInt, condecimal, conint
+from pydantic.types import PositiveInt, condecimal
+from model.rwmodel import RWModel
 from utils.errors import OptionalNumbersError
 
 
@@ -19,7 +20,7 @@ class GenderEnum(str, Enum):
     not_given = "not_given"
 
 
-class Point(BaseModel):
+class PointContract(RWModel):
     x: int = Field(..., description="X coordenates",
                    example="1", alias="x_coord")
     y: int = Field(..., description="Y coordenates",
@@ -29,8 +30,8 @@ class Point(BaseModel):
         title = "Point Model"
         orm_mode = True
 
-
-class ExampleClassRequest(BaseModel):
+        
+class ExampleClassRequest(RWModel):
     """Represents a Resquest for basic Example Endpoint"""
 
     name: str = Field(..., max_length=256, description="User name",
@@ -38,7 +39,7 @@ class ExampleClassRequest(BaseModel):
 
     gender: GenderEnum = Field(...,
                                description="Enumerator Class Model", alias="gender")
-    email: EmailStr = Field(alias="email", description="User Email", example="john@beatles.com"
+    email: EmailStr = Field(alias="email", description="User Email", example="john.lennon@gmail.com"
                             )
     float_number: Decimal = Field(
         ..., multiple_of=0.01, description="A float Number", example="1.11", alias="float_number"
@@ -49,15 +50,12 @@ class ExampleClassRequest(BaseModel):
     optional_float: Optional[condecimal(max_digits=18, decimal_places=2)] = Field(
         None, description="An optional float", example="1.12", alias="optional_float"
     )
-    point: Optional[Point] = Field(..., alias="point",
+    point: PointContract = Field(..., alias="point",
                                    description="example of relationship model. Set X and Y")
-    page: Optional[PositiveInt] = Field(
-        1, alias="page", description="page for pagination GET", example=1)
-    max_pagination: int = Field(
-        10, ge=1, le=20, alias="max_pagination", example=10, description="max return for page on GET")
+    
 
     class Config:
-        title = "Exemple Model"
+        title = "Exemple Model Creation"
         orm_mode = True
 
     # @pydantic.root_validator(pre=True)
@@ -84,3 +82,11 @@ class DBExampleClass(DateTimeModelMixin, IDModelMixin, ExampleClassRequest):
                                                    description="String identification",
                                                    example=uuid.uuid4()
                                                    )
+
+
+class ExampleGetRespose(Pagination):
+    example: DBExampleClass
+
+
+# class ExampleResponse:
+#     example: DBExampleClass

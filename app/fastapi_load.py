@@ -3,7 +3,6 @@ from typing import Any, Callable, List, Optional, Sequence
 from env_config import settings
 from fastapi import FastAPI
 
-
 class FastAPIStarter:
     @classmethod
     def start_up(
@@ -31,5 +30,6 @@ class FastAPIStarter:
         if routers:
             for route in routers[::-1]:
                 api.include_router(route)
+
 
         return api

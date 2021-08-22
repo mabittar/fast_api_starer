@@ -5,7 +5,7 @@ from fastapi.params import Path
 from services.example_service import ExampleService
 from utils.database import DBConnector
 
-from model.contracts.example_contract import ExampleClassRequest, DBExampleClass
+from model.contracts.example_contract import ExampleClassRequest, DBExampleClass, ExampleGetRespose
 
 example_router = APIRouter()
 
@@ -13,17 +13,17 @@ example_router = APIRouter()
 @example_router.get(
     "/example",
     status_code=200,
-    tags=["example model"],nam
-
+    tags=["example model"],
+    name='example:get example',
     response_model=DBExampleClass,
-    description="Use HTTPVerb GET to get example models",
+    description="Use HTTP Method GET to get example models",
 )
 async def get_example_models(
-    example_item: ExampleClassRequest,
+    example_item: ExampleGetRespose,
     page: Optional[int] = 1,
     max_pagination: Optional[int] = 10,
     first_result: Optional[bool] = False,
-):
+) -> ExampleGetRespose:
     """
     This is a endpoint is used to get Example Class Model
 
@@ -34,11 +34,11 @@ async def get_example_models(
             status_code=404,
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
-    with DBConnector.session_scope() as session:
+    with DBConnector.create_session() as session:
         example_service = ExampleService(
-            session=session, example_data=example_item)
+            session=session)
         example_model = example_service.get_data(
-            page, max_pagination, first_result)
+            example_item, page, max_pagination, first_result)
 
         return await example_model
 
@@ -47,12 +47,13 @@ async def get_example_models(
     "/example/{example_id}",
     status_code=200,
     tags=["example model"],
-    response_model=DBExampleClass,
-    description="Use HTTPVerb GET to get example by ID",
+    name='example:get example by ID',
+    response_model=ExampleGetRespose,
+    description="Use HTTP Method GET to get example by ID",
 )
 async def get_example_by_id(
     example_id:int = Path(..., title="Use ID to get an example")
-):
+) -> ExampleGetRespose:
     """
     This is a endpoint is used to get Example Class Model
 
@@ -63,7 +64,7 @@ async def get_example_by_id(
             status_code=404,
             detail=f"Oops! ID cannot be null, please check documentation.",
         )
-    with DBConnector.session_scope() as session:
+    with DBConnector.create_session() as session:
         example_service = ExampleService(
             session=session)
         example_model = example_service.get_data_by_id(
@@ -76,11 +77,12 @@ async def get_example_by_id(
     "/example",
     status_code=201,
     response_model=DBExampleClass,
+    name='example:post create new example',
     response_model_exclude_unset=True,
-    description="Use HTTPVerb POST to create example model",
+    description="Use HTTP Method POST to create example model",
     tags=["example model"],
 )
-async def create_example_model(req: Request, example_item: ExampleClassRequest):
+async def create_example_model(example_item: ExampleClassRequest) -> DBExampleClass:
     """
     This is a endpoint is used to post new Example Class Model
 
@@ -91,24 +93,26 @@ async def create_example_model(req: Request, example_item: ExampleClassRequest):
             status_code=404,
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
-    with DBConnector.session_scope() as session:
+    with DBConnector.create_session() as session:
         example_service = ExampleService(
-            session=session, example_data=example_item)
-        new_item_model = example_service.create_example()
+            session=session)
+        user = example_service.create_example(
+            example_data=example_item)
 
-        return new_item_model
+        return DBExampleClass(user=user)
 
 
 @example_router.patch(
     "/example/{example_id}",
     status_code=200,
     response_model=DBExampleClass,
-    description="Use HTTPVerb PATCH to update example model",
+    name='example:patch to update an example',
+    description="Use HTTP Method PATCH to update example model",
     tags=["example model"],
 )
 async def update_example_model(
-    example_item: ExampleClassRequest,
-    example_id: int = Path(..., title="Use ID to get an example"), ):
+        example_item: ExampleClassRequest,
+        example_id: int = Path(..., title="Use ID to get an example")) -> DBExampleClass:
     """
     This is a endpoint is used to update an existing Example Class Model
 
@@ -118,9 +122,10 @@ async def update_example_model(
             status_code=404,
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
-    with DBConnector.session_scope() as session:
+    with DBConnector.create_session() as session:
         example_service = ExampleService(
-            session=session, example_data=example_item)
-        model_updated = example_service.update_example(example_id)
+            session=session)
+        model_updated = example_service.update_example(
+            example_id, example_item)
 
-        return await model_updated
+        return await DBExampleClass(model_updated)

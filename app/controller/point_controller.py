@@ -1,5 +1,6 @@
 from sqlalchemy.orm.session import Session
-from orm.point_model import PointModel
+from model.contracts.example_contract import PointContract
+from orm.example_model import PointModel
 
 from controller.base_controller import CRUDController
 
@@ -9,9 +10,16 @@ class PointController(CRUDController):
         super().__init__(model=PointModel)
         self.session = session
 
-    async def create(self, model: PointModel) -> PointModel:
+    def create(self, model: PointModel) -> PointContract:
 
-        self.session.add(model)
-        self.session.flush()
+        point = PointModel(
+            x=model.x,
+            y=model.x
+        )
+        
+        
 
-        return model
+        self.session.add(point)
+        self.session.commit()
+
+        return point

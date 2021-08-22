@@ -1,6 +1,8 @@
 import datetime
+from typing import Optional
 
 from pydantic import BaseModel, Field, validator
+from pydantic.types import PositiveInt
 
 
 class DateTimeModelMixin(BaseModel):
@@ -20,3 +22,10 @@ class DateTimeModelMixin(BaseModel):
 
 class IDModelMixin(BaseModel):
     id_: int = Field(0, alias="id", example='1')
+
+
+class Pagination(BaseModel):
+    page: Optional[PositiveInt] = Field(
+        1, alias="page", description="page for pagination GET", example=1)
+    max_pagination: int = Field(
+        10, ge=1, le=20, alias="max_pagination", example=10, description="max return for page on GET")

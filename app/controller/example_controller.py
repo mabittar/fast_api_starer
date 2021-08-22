@@ -5,7 +5,7 @@ import uuid
 from sqlalchemy.orm.session import Session
 
 from controller.base_controller import CRUDController
-from model.contracts.example_contract import DBExampleClass
+from model.contracts.example_contract import ExampleClassRequest
 from orm.example_model import ExampleClassModel
 from pydantic.types import UUID4
 
@@ -16,20 +16,38 @@ class ExampleController(CRUDController):
         super().__init__(model=ExampleClassModel)
         self.session = session
 
-    async def create(self, data: ExampleClassModel) -> DBExampleClass:
-        
-        data.public_key = str(uuid.uuid4())
-        data.created_at = datetime.datetime.now()
-        self.session.add(data)
+    def create(self, data: ExampleClassRequest):
+        model = ExampleClassModel(
+            name=data.name,
+            gender=data.gender,
+            email=data.email,
+            float_number=data.float_number,
+            optional_integer=data.optional_integer,
+            optional_float=data.optional_float,
+            point=data.point
+        )
+        model.public_key = str(uuid.uuid4())
+        model.created_at = datetime.datetime.now()
+        self.session.add(model)
         self.session.flush()
 
-        return data
+        return model
 
     async def update(
         self,
-        model: ExampleClassModel
-    ) -> ExampleClassModel:
+        model: ExampleClassModel,
 
+        data: ExampleClassModel
+    ) -> ExampleClassModel:
+        model = ExampleClassModel(
+            name=data.name,
+            gender=data.gender,
+            email=data.email,
+            float_number=data.float_number,
+            optional_integer=data.optional_integer,
+            optional_float=data.optional_float,
+            point=data.point
+        )
         model.updated_at = datetime.datetime.now()
 
         self.session.add(model)

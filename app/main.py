@@ -1,5 +1,6 @@
 import sys
 
+
 from env_config import settings
 from fastapi import FastAPI
 from fastapi_load import FastAPIStarter
