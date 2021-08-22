@@ -17,15 +17,7 @@ class ExampleController(CRUDController):
         self.session = session
 
     def create(self, data: ExampleClassRequest):
-        model = ExampleClassModel(
-            name=data.name,
-            gender=data.gender,
-            email=data.email,
-            float_number=data.float_number,
-            optional_integer=data.optional_integer,
-            optional_float=data.optional_float,
-            point=data.point
-        )
+        model = ExampleClassModel(**data.dict())
         model.public_key = str(uuid.uuid4())
         model.created_at = datetime.datetime.now()
         self.session.add(model)
@@ -39,15 +31,7 @@ class ExampleController(CRUDController):
 
         data: ExampleClassModel
     ) -> ExampleClassModel:
-        model = ExampleClassModel(
-            name=data.name,
-            gender=data.gender,
-            email=data.email,
-            float_number=data.float_number,
-            optional_integer=data.optional_integer,
-            optional_float=data.optional_float,
-            point=data.point
-        )
+        model = ExampleClassModel(**data.dict())
         model.updated_at = datetime.datetime.now()
 
         self.session.add(model)

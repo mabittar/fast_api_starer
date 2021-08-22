@@ -22,7 +22,7 @@ def in_memory_db():
     try:
         # TODO create sql script with test data
         with open(
-            Path(os.path.dirname(os.path.abspath(__file__))) / "test_db_data.sql", "r"
+            Path(os.path.dirname(os.path.abspath(__file__))) / "../tests/test_db_data.sql", "r"
         ) as file:
             raw_cursor.executescript(file.read())
     except FileNotFoundError:

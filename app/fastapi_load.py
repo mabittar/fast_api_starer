@@ -1,5 +1,5 @@
 from typing import Any, Callable, List, Optional, Sequence
-
+from fastapi.middleware.cors import CORSMiddleware
 from env_config import settings
 from fastapi import FastAPI
 
@@ -21,6 +21,14 @@ class FastAPIStarter:
             docs_url=swagger_url,
             on_startup=on_startup,
             on_shutdown=on_shutdown,
+        )
+
+        api.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_methods=["*"],
+            allow_headers=["*"],
+            allow_credentials=True,
         )
 
         if middlewares:

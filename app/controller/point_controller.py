@@ -12,13 +12,7 @@ class PointController(CRUDController):
 
     def create(self, model: PointModel) -> PointContract:
 
-        point = PointModel(
-            x=model.x,
-            y=model.x
-        )
-        
-        
-
+        point = PointModel(**model.dict())
         self.session.add(point)
         self.session.commit()
 

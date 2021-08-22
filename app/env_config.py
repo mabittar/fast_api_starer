@@ -60,7 +60,7 @@ class DbSettings(BaseSettings):
     bd_host: str = Field(env="db_host")
     db_port: int = Field(default=3360, env="db_port")
     db_pool_size: int = Field(default="-1", env="db_pool_size")
-    db_url: str = Field(default="sqlite:///./sql_app.db", env="db_url")
+    db_url: str = Field(default="sqlite:///./local_db/sql_app.db", env="db_url")
     project_name: str = Field(default="fastapi_starter", env="project_name")
 
 
