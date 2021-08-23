@@ -1,27 +1,26 @@
 import sys
 
-
 from env_config import settings
 from fastapi import FastAPI
 from fastapi_load import FastAPIStarter
-from utils.database import DBConnector
+from utils.database import get_db
 from utils.logger import Logger
 from middlewares import custom_middlewares_list
 from routers import routers_list
-
+from utils.database import engine
+from orm import models
 version = f"{sys.version_info.major}.{sys.version_info.minor}"
 
 
 class App:
     async def on_startup(self):
-        DBConnector.create_engine()
+        get_db()
         Logger().info(
             msg=f"{settings.project_name} STARTING...Using python version {version} and Uvicorn with Gunicorn"
         )
 
     async def on_shutdown(self):
-
-        DBConnector.close()
+        get_db().close()
         Logger.info(msg="shutting down...")
 
     # add new endpoints to init routers_list
@@ -37,5 +36,8 @@ class App:
 
         return api
 
+if len(models) != 0:
+    for model in models:
+        model.Base.create_all(bind=engine)
 
 app = App().create()

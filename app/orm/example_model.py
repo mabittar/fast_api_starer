@@ -1,22 +1,9 @@
 
 from sqlalchemy import DECIMAL, Column, DateTime, Enum, Integer, String, func, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+from orm.point_model import PointModel
+from utils.database import Base
 
-Base = declarative_base()
-class PointModel(Base):
-    __tablename__ = "PointModel"
-    """Represents a relantionship ORM model"""
-    id = Column(
-        Integer,
-        primary_key=True,
-        unique=True,
-        index=True,
-        autoincrement=True,
-        nullable=False,
-    )
-    x = Column(Integer, nullable=False)
-    y = Column(Integer, nullable=False)
 
 
 class ExampleClassModel(Base):

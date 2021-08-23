@@ -3,18 +3,20 @@ from typing import List, Optional, Union
 import uuid
 
 from sqlalchemy.orm.session import Session
+from sqlalchemy.sql.expression import asc, desc
+from controller.base_controller import CRUDBase
 
-from controller.base_controller import CRUDController
 from model.contracts.example_contract import ExampleClassRequest
 from orm.example_model import ExampleClassModel
 from pydantic.types import UUID4
 
+from utils.database import get_db
 
 
-class ExampleController(CRUDController):
-    def __init__(self, session: Session) -> None:
+class ExampleController(CRUDBase):
+    def __init__(self, session: Optional[Session] = None):
         super().__init__(model=ExampleClassModel)
-        self.session = session
+        self.session = session if session else get_db()
 
     def create(self, data: ExampleClassRequest):
         model = ExampleClassModel(**data.dict())
@@ -22,6 +24,8 @@ class ExampleController(CRUDController):
         model.created_at = datetime.datetime.now()
         self.session.add(model)
         self.session.flush()
+        self.session.commit()
+        self.session.refresh(model)
 
         return model
 
@@ -48,8 +52,8 @@ class ExampleController(CRUDController):
         optional_integer: Optional[int],
         optional_float: Optional[float],
         first_result: Optional[bool],
-        page_number: Optional[int] = None,
-        page_size: Optional[int] = None,
+        page: Optional[int] = None,
+        max_pagination: Optional[int] = None,
         order_by: Optional[str] = None,
     ) -> Union[List[ExampleClassModel], ExampleClassModel]:
 
@@ -73,20 +77,21 @@ class ExampleController(CRUDController):
         if optional_float is not None:
             query = query.filter(ExampleClassModel.optional_float == optional_float)
 
-        if page_size and page_number:
+        if page and max_pagination:
             if order_by == "name_asc":
-                query = query.order_by(__asc(ExampleClassModel.name))
+                query = query.order_by(asc(ExampleClassModel.name))
             elif order_by == "name_desc":
-                query = query.order_by(__desc(ExampleClassModel.name))
+                query = query.order_by(desc(ExampleClassModel.name))
             elif order_by == "float_desc":
-                query = query.order_by(__desc(ExampleClassModel.float_number))
+                query = query.order_by(asc(ExampleClassModel.float_number))
             elif order_by == "float_asc":
-                query = query.order_by(__asc(ExampleClassModel.float_number))
+                query = query.order_by(desc(ExampleClassModel.float_number))
             elif order_by == "created_at_asc":
-                query = query.order_by(__asc(ExampleClassModel.created_at))
+                query = query.order_by(desc(ExampleClassModel.created_at))
             else:
-                query = query.order_by(__desc(ExampleClassModel.created_at))
-            query = query.limit(page_size).offset((page_number - 1) * page_size)
+                query = query.order_by(desc(ExampleClassModel.created_at))
+            query = query.limit(max_pagination).offset(
+                (page - 1) * max_pagination)
 
         result = query.first() if first_result else query.all()
 

@@ -1,11 +1,11 @@
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException
 from fastapi.params import Path
 from services.example_service import ExampleService
-from utils.database import DBConnector
 
 from model.contracts.example_contract import ExampleClassRequest, DBExampleClass, ExampleGetRespose
+from utils.database import get_db
 
 example_router = APIRouter()
 
@@ -34,7 +34,7 @@ async def get_example_models(
             status_code=404,
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
-    with DBConnector.create_session() as session:
+    with get_db() as session:
         example_service = ExampleService(
             session=session)
         example_model = example_service.get_data(
@@ -64,7 +64,7 @@ async def get_example_by_id(
             status_code=404,
             detail=f"Oops! ID cannot be null, please check documentation.",
         )
-    with DBConnector.create_session() as session:
+    with get_db() as session:
         example_service = ExampleService(
             session=session)
         example_model = example_service.get_data_by_id(
@@ -93,7 +93,7 @@ async def create_example_model(example_item: ExampleClassRequest) -> DBExampleCl
             status_code=404,
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
-    with DBConnector.create_session() as session:
+    with get_db() as session:
         example_service = ExampleService(
             session=session)
         user = example_service.create_example(
@@ -122,7 +122,7 @@ async def update_example_model(
             status_code=404,
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
-    with DBConnector.create_session() as session:
+    with get_db() as session:
         example_service = ExampleService(
             session=session)
         model_updated = example_service.update_example(

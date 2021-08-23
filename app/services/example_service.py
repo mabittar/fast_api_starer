@@ -5,6 +5,7 @@ from sqlalchemy.orm.session import Session
 from controller.point_controller import PointController
 from model.contracts.example_contract import DBExampleClass
 from orm.example_model import ExampleClassModel
+from utils.database import get_db
 from utils.logger import Logger
 
 
@@ -15,7 +16,7 @@ class ExampleService:
         session: Optional[Session] = None,
     ):
         self.logger = logger if logger is not None else Logger
-        self.session = session if session is not None else Session
+        self.session = session if session else  get_db()
 
     def get_data(
         self,

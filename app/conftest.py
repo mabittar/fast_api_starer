@@ -8,15 +8,13 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.orm.base_orm import BaseCRUD
-
 
 @pytest.fixture
 def in_memory_db():
-    execution_options = {"schema_translate_map": {"pix_transfer": None, "glob": None}}
+    execution_options = {"schema_translate_map": {"example": None, "point": None}}
     engine = create_engine("sqlite:///:memory:", execution_options=execution_options)
     # TODO update all models with constraints, to create tables here
-    BaseCRUD.metadata.create_all(engine)
+    # Base.metadata.create_all(engine)
 
     raw_cursor = engine.raw_connection()
     try:

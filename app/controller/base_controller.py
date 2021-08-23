@@ -1,80 +1,64 @@
-from typing import Any, List, Tuple, Union
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 
-from orm.base_orm import BaseCRUD
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy import Column, asc, desc, or_
-from sqlalchemy.orm.query import Query
-from sqlalchemy.sql.schema import Column
+from sqlalchemy.orm import Session
+
+from utils.database import Base
+
+ModelType = TypeVar("ModelType", bound=Base)
+CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
+UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 
-class CRUDController(BaseCRUD):
-    def __init__(self, model: BaseModel):
-        BaseCRUD.__init__(self)
+class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
+    def __init__(self, model: Type[ModelType]):
+        """
+        CRUD object with default methods to Create, Read, Update, Delete (CRUD).
+        **Parameters**
+        * `model`: A SQLAlchemy model class
+        * `schema`: A Pydantic model (schema) class
+        """
         self.model = model
 
-    def add(self, data: Union[BaseModel, List[BaseModel]]) -> None:
-        if not isinstance(data, list):
-            data = [data]
-        self.session.add_all(data)
+    def get(self, db: Session, id: Any) -> Optional[ModelType]:
+        return db.query(self.model).filter(self.model.id == id).first()
 
-    def delete(self, data: BaseModel) -> None:
-        self.session.delete(data)
+    def get_multi(
+        self, db: Session, *, page: int = 0, max_pagination: int = 100
+    ) -> List[ModelType]:
+        return db.query(self.model).offset(page).limit(max_pagination).all()
 
-    def new_query(self) -> Query:
-        return self.session.query(self.model)
+    def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
+        obj_in_data = jsonable_encoder(obj_in)
+        db_obj = self.model(**obj_in_data)  # type: ignore
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
 
-    def lock(self, query: Query) -> Query:
-        return query.with_for_update(of=self.model)
+    def update(
+        self,
+        db: Session,
+        *,
+        db_obj: ModelType,
+        obj_in: Union[UpdateSchemaType, Dict[str, Any]]
+    ) -> ModelType:
+        obj_data = jsonable_encoder(db_obj)
+        if isinstance(obj_in, dict):
+            update_data = obj_in
+        else:
+            update_data = obj_in.dict(exclude_unset=True)
+        for field in obj_data:
+            if field in update_data:
+                setattr(db_obj, field, update_data[field])
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
 
-    def get_first(self, query: Query) -> BaseModel:
-        return query.first()
-
-    def get_all(self, query: Query) -> List[BaseModel]:
-        return query.all()
-
-    @staticmethod
-    def __asc(query: Query, column: Column) -> Query:
-        new_query = query.order_by(asc(column))
-        return new_query
-
-    @staticmethod
-    def __desc(query: Query, column: Column) -> Query:
-        new_query = query.order_by(desc(column))
-        return new_query
-
-    @staticmethod
-    def _order_by(query: Query, column: Column, order: str) -> Query:
-        method = {
-            "asc": CRUDController.__asc,
-            "desc": CRUDController.__desc,
-        }
-        return method[order](query, column)
-
-    @staticmethod
-    def _filter_or(
-        query: Query, condition_tuple_list: List[Tuple[str, Column, Any]]
-    ) -> Query:
-        def build_condition(filter_type: str, column: Column, value):
-            if filter_type == "like":
-                if not isinstance(value, list):
-                    value = [value]
-                response = [column.like(f"%{single_value}%") for single_value in value]
-            else:
-                if not isinstance(value, list):
-                    value = [value]
-                response = [column.in_(value)]
-            return response
-
-        condition_list = []
-        for condition_tuple in condition_tuple_list:
-            condition_list.extend(
-                build_condition(
-                    filter_type=condition_tuple[0],
-                    column=condition_tuple[1],
-                    value=condition_tuple[2],
-                )
-            )
-
-        new_query = query.filter(or_(*condition_list))
-
-        return new_query
+    def remove(self, db: Session, *, id: int) -> ModelType:
+        obj = db.query(self.model).get(id)
+        db.delete(obj)
+        db.commit()
+        return obj
