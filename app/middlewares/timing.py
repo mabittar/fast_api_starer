@@ -19,7 +19,6 @@ class Timing(BaseMiddleware):
 
     @staticmethod
     async def process_response(request: Request, response: Response):
-        start_time = datetime.datetime.now()
 
         process_time = round(
             (datetime.datetime.now() - request.state.start_time).total_seconds() * 1000, 3)

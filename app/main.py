@@ -3,11 +3,11 @@ import sys
 from env_config import settings
 from fastapi import FastAPI
 from fastapi_load import FastAPIStarter
-from utils.database import get_db
+from utils.db.database import get_db
 from utils.logger import Logger
 from middlewares import custom_middlewares_list
 from routers import routers_list
-from utils.database import engine
+from utils.db.database import engine
 from models import models
 version = f"{sys.version_info.major}.{sys.version_info.minor}"
 
@@ -36,8 +36,8 @@ class App:
 
         return api
 
-if len(models) != 0:
-    for model in models:
-        model.Base.create_all(bind=engine)
+# if len(models) != 0:
+#     for model in models:
+#         model.Base.create_all(bind=engine)
 
 app = App().create()

@@ -1,7 +1,7 @@
 
 
-from example_model import ExampleClassModel
-from point_model import PointModel
+from .example_model import Example
+from .point_model import Point
 
 
-models = [PointModel, ExampleClassModel]
+models = [Point, Example]

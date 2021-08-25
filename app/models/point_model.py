@@ -1,8 +1,13 @@
+from typing import TYPE_CHECKING
 from sqlalchemy import Column, Integer
-from utils.database import Base
+from utils.db.database import Base
 
-class PointModel(Base):
-    __tablename__ = "point_model"
+
+if TYPE_CHECKING:
+    from .example_model import Example
+
+class Point(Base):
+    __tablename__ = "Point"
     """Represents a relantionship ORM model"""
     id = Column(
         Integer,

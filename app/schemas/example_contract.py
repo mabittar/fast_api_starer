@@ -5,12 +5,11 @@ from typing import List, Optional, Union
 
 import pydantic
 from pydantic.main import BaseModel
-from common import DateTimeModelMixin, IDModelMixin, Pagination
+from .common import DateTimeModelMixin, IDModelMixin, Pagination
 from pydantic import Field
 from pydantic.networks import EmailStr
 from pydantic.types import PositiveInt, condecimal
 from utils.errors import EmailMustContainsAt, OptionalNumbersError
-import fastapi.utils as u
 
 
 class GenderEnum(str, Enum):
@@ -21,8 +20,10 @@ class GenderEnum(str, Enum):
 
 
 class PointContract(BaseModel):
-    x: int
-    y: int
+    x: int = Field(..., description="X coordenates",
+                   example="1", alias="x_coord")
+    y: int = Field(..., description="Y coordenates",
+                   example="2", alias="y_coord")
 
 
 class PointInDB(IDModelMixin):
@@ -36,13 +37,23 @@ class PointInDB(IDModelMixin):
 class ExampleClassRequest(BaseModel):
     """Represents a Resquest to create an Example after POST to Endpoint"""
 
-    name: str
-    gender: GenderEnum
-    email: EmailStr
-    float_number: Decimal
-    optional_integer: int = None
-    optional_float: Optional[condecimal(max_digits=18, decimal_places=2)] = None
-    point: PointContract 
+    name: str = Field(..., max_length=256, description="User name",
+                      example="John Lennon", alias="name")
+    gender: GenderEnum = Field(...,
+                               description="Enumerator Class Model", alias="gender")
+    email: EmailStr = Field(alias="email", description="User Email", example="john@beatles.com"
+                            )
+    float_number: Decimal = Field(
+        ..., multiple_of=0.01, description="A float Number", example="1.11", alias="float_number"
+    )
+    optional_integer: int = Field(
+        None, description="An optional positive integer", example="11", alias="optional_integer"
+    )
+    optional_float: Optional[condecimal(max_digits=18, decimal_places=2)] = Field(
+        None, description="An optional float", example="1.12", alias="optional_float"
+    )
+    point: PointContract = Field(..., alias="point",
+                                 description="example of relationship model. Set X and Y")
 
     class Config:
         title = "Exemple Model Creation"
@@ -69,7 +80,10 @@ class ExampleClassRequest(BaseModel):
 class ExampleInDB(DateTimeModelMixin, IDModelMixin, ExampleClassRequest):
     """Represents an Example Model in Database"""
 
-    public_key: Union[int, str, uuid.UUID]
+    public_key: Union[int, str, uuid.UUID] = Field(..., alias="public key",
+                                                   description="String identification",
+                                                   example=uuid.uuid4()
+                                                   )
 
     class config:
         orm_model = True

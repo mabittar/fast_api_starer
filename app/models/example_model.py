@@ -1,13 +1,15 @@
 
 from sqlalchemy import DECIMAL, Column, DateTime, Enum, Integer, String, func, ForeignKey
 from sqlalchemy.orm import relationship
-from point_model import PointModel
-from utils.database import Base
+from .point_model import Point
+from utils.db.database import Base
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from .point_model import Point
 
-
-class ExampleClassModel(Base):
-    __tablename__ = "ExampleClassModel"
+class Example(Base):
+    __tablename__ = "Example"
     """Represents a basic ORM model"""
     id = Column(
         Integer,
@@ -25,8 +27,8 @@ class ExampleClassModel(Base):
     float_number = Column(DECIMAL(19, 2), nullable=False)
     optional_integer = Column(Integer, nullable=True)
     optional_float = Column(DECIMAL(19, 2), nullable=True)
-    point_id = Column(Integer, ForeignKey(PointModel.id))
-    point = relationship("PointModel", foreign_keys=[
+    point_id = Column(Integer, ForeignKey(Point.id))
+    point = relationship("Point", foreign_keys=[
                          point_id], lazy="joined")
     updated_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)

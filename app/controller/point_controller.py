@@ -1,20 +1,20 @@
 from sqlalchemy.orm.session import Session
 from controller.base_controller import CRUDBase
-from model.contracts.example_contract import PointContract
-from orm.example_model import PointModel
+from schemas.example_contract import PointContract
+from  models.example_model import Point
 
 
-from utils.database import get_db
+from utils.db.database import get_db
 
 
 class PointController(CRUDBase):
     def __init__(self, session: Session) -> None:
-        super().__init__(model=PointModel)
+        super().__init__(model=Point)
         self.session = session if session else get_db()
 
-    def create(self, model: PointModel) -> PointContract:
+    def create(self, model: Point) -> PointContract:
 
-        point = PointModel(**model.dict())
+        point = Point(**model.dict())
         self.session.add(point)
         self.session.commit()
 

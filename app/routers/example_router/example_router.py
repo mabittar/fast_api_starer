@@ -4,8 +4,8 @@ from fastapi import APIRouter, HTTPException
 from fastapi.params import Path
 from services.example_service import ExampleService
 
-from model.contracts.example_contract import ExampleClassRequest, DBExampleClass, ExampleGetRespose
-from utils.database import get_db
+from schemas.example_contract import ExampleClassRequest, ExampleGetRespose, ExampleResponse, ExampleGetRespose
+from utils.db.database import get_db
 
 example_router = APIRouter()
 
@@ -15,7 +15,7 @@ example_router = APIRouter()
     status_code=200,
     tags=["example model"],
     name='example:get example',
-    response_model=DBExampleClass,
+    response_model=ExampleGetRespose,
     description="Use HTTP Method GET to get example models",
 )
 async def get_example_models(
@@ -76,7 +76,7 @@ async def get_example_by_id(
 @example_router.post(
     "/example",
     status_code=201,
-    response_model=DBExampleClass,
+    response_model=ExampleResponse,
     name='example:post create new example',
     response_model_exclude_unset=True,
     description="Use HTTP Method POST to create example model",
@@ -99,13 +99,13 @@ async def create_example_model(example_item: ExampleClassRequest):
         user = example_service.create_example(
             example_data=example_item)
 
-        return DBExampleClass(user=user)
+        return ExampleResponse(user=user)
 
 
 @example_router.patch(
     "/example/{example_id}",
     status_code=200,
-    response_model=DBExampleClass,
+    response_model=ExampleResponse,
     name='example:patch to update an example',
     description="Use HTTP Method PATCH to update example model",
     tags=["example model"],
@@ -128,4 +128,4 @@ async def update_example_model(
         model_updated = example_service.update_example(
             example_id, example_item)
 
-        return await DBExampleClass(model_updated)
+        return await ExampleResponse(model_updated)

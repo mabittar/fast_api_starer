@@ -6,20 +6,20 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.expression import asc, desc
 from controller.base_controller import CRUDBase
 
-from model.contracts.example_contract import ExampleClassRequest
-from orm.example_model import ExampleClassModel
+from schemas.example_contract import ExampleClassRequest
+from models.example_model import Example
 from pydantic.types import UUID4
 
-from utils.database import get_db
+from utils.db.database import get_db
 
 
 class ExampleController(CRUDBase):
     def __init__(self, session: Optional[Session] = None):
-        super().__init__(model=ExampleClassModel)
+        super().__init__(model=Example)
         self.session = session if session else get_db()
 
     def create(self, data: ExampleClassRequest):
-        model = ExampleClassModel(**data.dict())
+        model = Example(**data.dict())
         model.public_key = str(uuid.uuid4())
         model.created_at = datetime.datetime.now()
         self.session.add(model)
@@ -31,11 +31,11 @@ class ExampleController(CRUDBase):
 
     async def update(
         self,
-        model: ExampleClassModel,
+        model: Example,
 
-        data: ExampleClassModel
-    ) -> ExampleClassModel:
-        model = ExampleClassModel(**data.dict())
+        data: Example
+    ) -> Example:
+        model = Example(**data.dict())
         model.updated_at = datetime.datetime.now()
 
         self.session.add(model)
@@ -55,41 +55,41 @@ class ExampleController(CRUDBase):
         page: Optional[int] = None,
         max_pagination: Optional[int] = None,
         order_by: Optional[str] = None,
-    ) -> Union[List[ExampleClassModel], ExampleClassModel]:
+    ) -> Union[List[Example], Example]:
 
-        query = self.new_query(ExampleClassModel)
+        query = self.new_query(Example)
 
         if example_id is not None:
-            query = query.filter(ExampleClassModel.id == example_id)
+            query = query.filter(Example.id == example_id)
 
         if public_key is not None:
-            query = query.filter(ExampleClassModel.public_key == public_key)
+            query = query.filter(Example.public_key == public_key)
 
         if name is not None:
-            query = query.filter(ExampleClassModel.name == name)
+            query = query.filter(Example.name == name)
 
         if float_number is not None:
-            query = query.filter(ExampleClassModel.float_number == float_number)
+            query = query.filter(Example.float_number == float_number)
 
         if optional_integer is not None:
-            query = query.filter(ExampleClassModel.optional_integer == optional_integer)
+            query = query.filter(Example.optional_integer == optional_integer)
 
         if optional_float is not None:
-            query = query.filter(ExampleClassModel.optional_float == optional_float)
+            query = query.filter(Example.optional_float == optional_float)
 
         if page and max_pagination:
             if order_by == "name_asc":
-                query = query.order_by(asc(ExampleClassModel.name))
+                query = query.order_by(asc(Example.name))
             elif order_by == "name_desc":
-                query = query.order_by(desc(ExampleClassModel.name))
+                query = query.order_by(desc(Example.name))
             elif order_by == "float_desc":
-                query = query.order_by(asc(ExampleClassModel.float_number))
+                query = query.order_by(asc(Example.float_number))
             elif order_by == "float_asc":
-                query = query.order_by(desc(ExampleClassModel.float_number))
+                query = query.order_by(desc(Example.float_number))
             elif order_by == "created_at_asc":
-                query = query.order_by(desc(ExampleClassModel.created_at))
+                query = query.order_by(desc(Example.created_at))
             else:
-                query = query.order_by(desc(ExampleClassModel.created_at))
+                query = query.order_by(desc(Example.created_at))
             query = query.limit(max_pagination).offset(
                 (page - 1) * max_pagination)
 
