@@ -16,6 +16,5 @@ class PointController(CRUDBase):
 
         point = Point(**model.dict())
         self.session.add(point)
-        self.session.commit()
 
         return point

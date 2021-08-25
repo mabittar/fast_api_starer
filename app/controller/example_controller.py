@@ -24,7 +24,6 @@ class ExampleController(CRUDBase):
         model.created_at = datetime.datetime.now()
         self.session.add(model)
         self.session.flush()
-        self.session.commit()
         self.session.refresh(model)
 
         return model

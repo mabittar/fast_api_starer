@@ -14,10 +14,14 @@ version = f"{sys.version_info.major}.{sys.version_info.minor}"
 
 class App:
     async def on_startup(self):
-        get_db()
-        Logger().info(
-            msg=f"{settings.project_name} STARTING...Using python version {version} and Uvicorn with Gunicorn"
-        )
+        try:
+            get_db()
+            Logger(class_name=__name__).info(
+                msg=f"{settings.project_name} STARTING...Using python version {version} and Uvicorn with Gunicorn"
+            )
+        except Exception as e:
+            Logger(class_name=__name__).error(e)
+            raise e
 
     async def on_shutdown(self):
         get_db().close()
@@ -35,9 +39,5 @@ class App:
         )
 
         return api
-
-# if len(models) != 0:
-#     for model in models:
-#         model.Base.create_all(bind=engine)
 
 app = App().create()

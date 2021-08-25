@@ -3,7 +3,7 @@ from typing import Optional
 from controller.example_controller import ExampleController
 from sqlalchemy.orm.session import Session
 from controller.point_controller import PointController
-from schemas.example_contract import ExampleResponse, ExampleGetRespose
+from schemas import ExampleResponse, ExamplePaginatedResponse, ExampleClassRequest
 from models.example_model import Example
 from utils.db.database import get_db
 from utils.logger import Logger
@@ -15,8 +15,8 @@ class ExampleService:
         logger: Optional[Logger] = None,
         session: Optional[Session] = None,
     ):
-        self.logger = logger if logger is not None else Logger
-        self.session = session if session else  get_db()
+        self.logger = logger if logger is not None else Logger(class_name=__name__)
+        self.session = session if session else get_db
 
     def get_data(
         self,
@@ -43,9 +43,9 @@ class ExampleService:
         #         example_data_model.optional_integer
         #     example_data_model.output_optional = output_optional
 
-        return ExampleGetRespose(example_data_model)
+        return example_data_model
 
-    def create_example(self, example_data: Example):
+    def create_example(self, *, example_data: ExampleClassRequest):
         point_controller = PointController(session=self.session)
         point_data = example_data.point
         point_model = point_controller.create(point_data)
@@ -60,8 +60,8 @@ class ExampleService:
         #         example_data_model.optional_integer
         #     example_data_model.output_optional = output_optional
 
-        # self.session.commit()
-        return ExampleResponse(**example_data_model)
+        self.session.commit()
+        return example_data_model
 
     def update_example(self, example_id, example_data: Example):
         point_controller = PointController(session=self.session)
@@ -79,7 +79,7 @@ class ExampleService:
         )
         
         self.session.commit()
-        return ExampleResponse(example_data_model)
+        return example_data_model
 
     def get_data_by_id(
         self,
@@ -88,4 +88,4 @@ class ExampleService:
         example_controller = ExampleController(session=self.session)
         example_data_model = example_controller.get(example_id=example_id)
 
-        return ExampleGetRespose(example_data_model)
+        return example_data_model

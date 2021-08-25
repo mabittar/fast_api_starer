@@ -1,9 +1,11 @@
 import json
 import multiprocessing
 import os
+from typing import List, Union
 
 from dotenv.main import load_dotenv
-from pydantic import BaseSettings, Field
+from pydantic import BaseSettings, Field, validator
+from pydantic.networks import AnyHttpUrl
 
 workers_per_core_str = os.getenv("WORKERS_PER_CORE", "1")
 max_workers_str = os.getenv("MAX_WORKERS")
@@ -62,7 +64,15 @@ class DbSettings(BaseSettings):
     db_pool_size: int = Field(default="-1", env="db_pool_size")
     db_url: str = Field(default="sqlite:///./local_db/sql_app.db", env="db_url")
     project_name: str = Field(default="fastapi_starter", env="project_name")
+    back_end_cors_origins: List[AnyHttpUrl] = []
 
+    @validator("back_end_cors_origins", pre=True)
+    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
+        if isinstance(v, str) and not v.startswith("["):
+            return [i.strip() for i in v.split(",")]
+        elif isinstance(v, (list, str)):
+            return v
+        raise ValueError(v)
 
 settings = DbSettings(_env_file="../local.env")
 

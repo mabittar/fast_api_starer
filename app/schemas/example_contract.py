@@ -60,21 +60,21 @@ class ExampleClassRequest(BaseModel):
         orm_mode = True
         arbitrary_types_allowed = True
 
-    @pydantic.root_validator(pre=True)
-    @classmethod
-    def optional_numbers_must_be_null(cls, values):
-        if ("optional_integer" and "optional_float") not in values:
-            raise OptionalNumbersError(
-                title=values["title"], message="Model must have one optional value"
-            )
+    # @pydantic.root_validator(pre=True)
+    # @classmethod
+    # def optional_numbers_must_be_null(cls, values):
+    #     if ("optional_integer" and "optional_float") not in values:
+    #         raise OptionalNumbersError(
+    #             title=values["title"], message="Model must have one optional value"
+    #         )
 
-    @pydantic.validator('email')
-    @classmethod
-    def email_must_contains_at(cls, values):
-        if "@" not in values:
-            raise EmailMustContainsAt(
-                title=values["title"], message="Model must have one optional value"
-            )
+    # @pydantic.validator('email')
+    # @classmethod
+    # def email_must_contains_at(cls, values):
+    #     if "@" not in values:
+    #         raise EmailMustContainsAt(
+    #             title=values["title"], message="Model must have one optional value"
+    #         )
 
 
 class ExampleInDB(DateTimeModelMixin, IDModelMixin, ExampleClassRequest):
@@ -89,8 +89,8 @@ class ExampleInDB(DateTimeModelMixin, IDModelMixin, ExampleClassRequest):
         orm_model = True
     
 
-class ExampleGetRespose(Pagination, ExampleInDB):
-    """Represents an Example Model to return via API"""
+class ExamplePaginatedResponse(Pagination, ExampleInDB):
+    """Represents a Paginated Example Model to return via API after GET"""
     pass
 
 

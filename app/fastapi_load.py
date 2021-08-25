@@ -22,14 +22,14 @@ class FastAPIStarter:
             on_startup=on_startup,
             on_shutdown=on_shutdown,
         )
-
-        api.add_middleware(
-            CORSMiddleware,
-            allow_origins=["*"],
-            allow_methods=["*"],
-            allow_headers=["*"],
-            allow_credentials=True,
-        )
+        if settings.back_end_cors_origins:
+            api.add_middleware(
+                CORSMiddleware,
+                allow_origins=["*"],
+                allow_methods=["*"],
+                allow_headers=["*"],
+                allow_credentials=True,
+            )
 
         if middlewares:
             for middleware in middlewares[::-1]:
