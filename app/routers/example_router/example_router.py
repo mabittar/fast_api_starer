@@ -23,7 +23,7 @@ async def get_example_models(
     page: Optional[int] = 1,
     max_pagination: Optional[int] = 10,
     first_result: Optional[bool] = False,
-) -> ExampleGetRespose:
+):
     """
     This is a endpoint is used to get Example Class Model
 
@@ -53,7 +53,7 @@ async def get_example_models(
 )
 async def get_example_by_id(
     example_id:int = Path(..., title="Use ID to get an example")
-) -> ExampleGetRespose:
+):
     """
     This is a endpoint is used to get Example Class Model
 
@@ -82,7 +82,7 @@ async def get_example_by_id(
     description="Use HTTP Method POST to create example model",
     tags=["example model"],
 )
-async def create_example_model(example_item: ExampleClassRequest) -> DBExampleClass:
+async def create_example_model(example_item: ExampleClassRequest):
     """
     This is a endpoint is used to post new Example Class Model
 
@@ -112,7 +112,7 @@ async def create_example_model(example_item: ExampleClassRequest) -> DBExampleCl
 )
 async def update_example_model(
         example_item: ExampleClassRequest,
-        example_id: int = Path(..., title="Use ID to get an example")) -> DBExampleClass:
+        example_id: int = Path(..., title="Use ID to get an example")):
     """
     This is a endpoint is used to update an existing Example Class Model
 

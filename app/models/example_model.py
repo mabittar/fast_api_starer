@@ -1,7 +1,7 @@
 
 from sqlalchemy import DECIMAL, Column, DateTime, Enum, Integer, String, func, ForeignKey
 from sqlalchemy.orm import relationship
-from orm.point_model import PointModel
+from point_model import PointModel
 from utils.database import Base
 
 

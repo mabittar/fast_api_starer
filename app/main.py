@@ -8,7 +8,7 @@ from utils.logger import Logger
 from middlewares import custom_middlewares_list
 from routers import routers_list
 from utils.database import engine
-from orm import models
+from models import models
 version = f"{sys.version_info.major}.{sys.version_info.minor}"
 
 
