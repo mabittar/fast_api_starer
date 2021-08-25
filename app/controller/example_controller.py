@@ -21,7 +21,7 @@ class ExampleController(CRUDBase):
     def create(self, data: ExampleClassRequest):
         model = Example(**data.dict())
         model.public_key = str(uuid.uuid4())
-        model.created_at = datetime.datetime.now()
+        model.created_at = datetime.now()
         self.session.add(model)
         self.session.flush()
         self.session.refresh(model)
