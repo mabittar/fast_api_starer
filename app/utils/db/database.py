@@ -1,10 +1,9 @@
 
-
+from typing import Any
 from sqlalchemy.ext.declarative import declarative_base
 
 
 from env_config import settings
-from sqlalchemy.engine import Engine
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import QueuePool

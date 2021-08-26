@@ -19,9 +19,17 @@ class ExampleController(CRUDBase):
         self.session = session if session else get_db()
 
     def create(self, data: ExampleClassRequest):
-        model = Example(**data.dict())
+        model = Example(
+            
+            name=data.name,
+            gender=data.gender,
+            email=data.email,
+            float_number=data.float_number,
+            optional_integer=data.optional_integer,
+            optional_float=data.optional_float
+
+            )
         model.public_key = str(uuid.uuid4())
-        model.created_at = datetime.now()
         self.session.add(model)
         self.session.flush()
         self.session.refresh(model)

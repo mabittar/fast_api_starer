@@ -2,7 +2,6 @@ from typing import Optional
 
 from controller.example_controller import ExampleController
 from sqlalchemy.orm.session import Session
-from controller.point_controller import PointController
 from schemas import ExampleResponse, ExamplePaginatedResponse, ExampleClassRequest
 from models.example_model import Example
 from utils.db.database import get_db
@@ -46,10 +45,6 @@ class ExampleService:
         return example_data_model
 
     def create_example(self, *, example_data: ExampleClassRequest):
-        point_controller = PointController(session=self.session)
-        point_data = example_data.point
-        point_model = point_controller.create(point_data)
-        example_data.point = point_model
         example_controller = ExampleController(session=self.session)
         example_data_model = example_controller.create(
             data=example_data)
@@ -64,10 +59,6 @@ class ExampleService:
         return example_data_model
 
     def update_example(self, example_id, example_data: Example):
-        point_controller = PointController(session=self.session)
-        point_data = self.example_data.get("point")
-        point_model = point_controller.create(**point_data)
-        self.example_data.point = point_model
         example_controller = ExampleController(session=self.session)
 
         example_data_model_to_update = example_controller.get(

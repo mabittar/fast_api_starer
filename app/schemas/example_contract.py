@@ -19,13 +19,6 @@ class GenderEnum(str, Enum):
     not_given = "not_given"
 
 
-class PointContract(BaseModel):
-    x: int = Field(..., description="X coordenates",
-                   example="1", alias="x_coord")
-    y: int = Field(..., description="Y coordenates",
-                   example="2", alias="y_coord")
-
-
 class PointInDB(IDModelMixin):
     pass 
 
@@ -52,9 +45,7 @@ class ExampleClassRequest(BaseModel):
     optional_float: Optional[condecimal(max_digits=18, decimal_places=2)] = Field(
         None, description="An optional float", example="1.12", alias="optional_float"
     )
-    point: PointContract = Field(..., alias="point",
-                                 description="example of relationship model. Set X and Y")
-
+    
     class Config:
         title = "Exemple Model Creation"
         orm_mode = True
