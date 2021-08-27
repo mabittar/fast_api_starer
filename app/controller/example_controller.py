@@ -10,13 +10,11 @@ from schemas.example_contract import ExampleClassRequest
 from models.example_model import Example
 from pydantic.types import UUID4
 
-from utils.db.database import get_db
-
 
 class ExampleController(CRUDBase):
-    def __init__(self, session: Optional[Session] = None):
+    def __init__(self, session: Session):
         super().__init__(model=Example)
-        self.session = session if session else get_db()
+        self.session = session
 
     def create(self, data: ExampleClassRequest):
         model = Example(
@@ -30,9 +28,9 @@ class ExampleController(CRUDBase):
 
             )
         model.public_key = str(uuid.uuid4())
+        model.created_at = datetime.now()
         self.session.add(model)
         self.session.flush()
-        self.session.refresh(model)
 
         return model
 

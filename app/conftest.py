@@ -7,7 +7,7 @@ import pytest
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from utils.database import Base
+from utils.db.database import Base
 
 
 @pytest.fixture

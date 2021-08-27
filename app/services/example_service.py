@@ -4,18 +4,18 @@ from controller.example_controller import ExampleController
 from sqlalchemy.orm.session import Session
 from schemas import ExampleResponse, ExamplePaginatedResponse, ExampleClassRequest
 from models.example_model import Example
-from utils.db.database import get_db
 from utils.logger import Logger
 
 
 class ExampleService:
     def __init__(
         self,
+
+        session: Session,
         logger: Optional[Logger] = None,
-        session: Optional[Session] = None,
     ):
         self.logger = logger if logger is not None else Logger(class_name=__name__)
-        self.session = session if session else get_db
+        self.session = session
 
     def get_data(
         self,
@@ -50,12 +50,12 @@ class ExampleService:
             data=example_data)
 
 
-        # if example_data_model.optional_float and example_data_model.optional_integer:
-        #     output_optional = example_data_model.optional_float * \
-        #         example_data_model.optional_integer
-        #     example_data_model.output_optional = output_optional
+        if example_data_model.optional_float and example_data_model.optional_integer:
+            output_optional = example_data_model.optional_float * \
+                example_data_model.optional_integer
+            example_data_model.output_optional = output_optional
 
-        self.session.commit()
+
         return example_data_model
 
     def update_example(self, example_id, example_data: Example):

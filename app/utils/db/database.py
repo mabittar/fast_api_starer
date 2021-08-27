@@ -1,5 +1,5 @@
 
-from typing import Any
+from typing import Any, Generator
 from sqlalchemy.ext.declarative import declarative_base
 
 
@@ -14,18 +14,6 @@ engine = create_engine(
 
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=True, bind=engine)
-
-
-def get_db():
-    session = SessionLocal()
-    try:
-        yield session
-        session.commit()
-    except Exception as exc:
-        session.rollback()
-        raise exc
-    finally:
-        session.close()
 
 
 Base = declarative_base()

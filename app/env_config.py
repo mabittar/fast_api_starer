@@ -76,6 +76,7 @@ class DbSettings(BaseSettings):
 
 settings = DbSettings()
 
+
 # For debugging and testing
 log_data = {
     "loglevel": loglevel,

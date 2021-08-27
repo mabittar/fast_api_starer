@@ -6,7 +6,7 @@ from fastapi import Request, Response
 
 class Timing(BaseMiddleware):
     @staticmethod
-    async def process_request(request: Request) -> Request:
+    async def register_incoming(request: Request) -> Request:
         request.state.start_time = datetime.datetime.now()
         
         Logger().info(
@@ -18,7 +18,7 @@ class Timing(BaseMiddleware):
         return request
 
     @staticmethod
-    async def process_response(request: Request, response: Response):
+    async def register_outgoing(request: Request, response: Response):
 
         process_time = round(
             (datetime.datetime.now() - request.state.start_time).total_seconds() * 1000, 3)

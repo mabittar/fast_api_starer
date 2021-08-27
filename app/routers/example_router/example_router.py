@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, Union
+from typing import Any, Generator, List, Optional, Union
 
 from fastapi import APIRouter, HTTPException
 from fastapi.params import Depends, Path
@@ -6,10 +6,20 @@ from sqlalchemy.orm.session import Session
 import models
 import schemas
 from services.example_service import ExampleService
-from utils.db.session import get_db
+from utils.db.database import SessionLocal
 
 example_router = APIRouter()
 
+
+def get_db() -> Generator:
+    session = SessionLocal()
+    try:
+        yield session
+    except Exception as exc:
+        session.rollback()
+        raise exc
+    finally:
+        session.close()
 
 @example_router.get(
     "/example",
@@ -36,13 +46,13 @@ async def get_example_models(
             status_code=404,
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
+    with session:
+        example_service = ExampleService(
+            session=session)
+        example_model = example_service.get_data(
+            example_item, page, max_pagination, first_result)
 
-    example_service = ExampleService(
-        session=session)
-    example_model = example_service.get_data(
-        example_item, page, max_pagination, first_result)
-
-    return await example_model
+        return await example_model
 
 
 @example_router.get(
@@ -68,12 +78,13 @@ async def get_example_by_id(
             detail=f"Oops! ID cannot be null, please check documentation.",
         )
 
-    example_service = ExampleService(
-        session=session)
-    example_model = example_service.get_data_by_id(
-        example_id)
+    with session:
+        example_service = ExampleService(
+            session=session)
+        example_model = example_service.get_data_by_id(
+            example_id)
 
-    return await example_model
+        return await example_model
 
 
 @example_router.post(
@@ -99,13 +110,16 @@ async def create_example_model(
             status_code=404,
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
- 
-    example_service = ExampleService(
-        session=session)
-    example_model = example_service.create_example(
-        example_data=example_item)
 
-    return example_model
+    with session:
+        example_service = ExampleService(
+            session=session)
+        example_model = example_service.create_example(
+            example_data=example_item)
+        session.commit()
+        session.refresh(example_model)
+        
+        return example_model
 
 
 @example_router.patch(
@@ -130,9 +144,11 @@ async def update_example_model(
             status_code=404,
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
-    example_service = ExampleService(
-        session=session)
-    model_updated = example_service.update_example(
-        example_id, example_item)
 
-    return model_updated
+    with session:
+        example_service = ExampleService(
+            session=session)
+        model_updated = example_service.update_example(
+            example_id, example_item)
+
+        return model_updated

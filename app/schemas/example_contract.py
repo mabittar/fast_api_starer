@@ -36,7 +36,7 @@ class ExampleClassRequest(BaseModel):
                                description="Enumerator Class Model", alias="gender")
     email: EmailStr = Field(alias="email", description="User Email", example="john@beatles.com"
                             )
-    float_number: Decimal = Field(
+    float_number: float = Field(
         ..., multiple_of=0.01, description="A float Number", example="1.11", alias="float_number"
     )
     optional_integer: int = Field(
@@ -59,13 +59,13 @@ class ExampleClassRequest(BaseModel):
     #             title=values["title"], message="Model must have one optional value"
     #         )
 
-    # @pydantic.validator('email')
-    # @classmethod
-    # def email_must_contains_at(cls, values):
-    #     if "@" not in values:
-    #         raise EmailMustContainsAt(
-    #             title=values["title"], message="Model must have one optional value"
-    #         )
+    @pydantic.validator('email')
+    @classmethod
+    def email_must_contains_at(cls, values):
+        if "@" not in values:
+            raise EmailMustContainsAt(
+                title=values["title"], message="Model must have one optional value"
+            )
 
 
 class ExampleInDB(DateTimeModelMixin, IDModelMixin, ExampleClassRequest):
