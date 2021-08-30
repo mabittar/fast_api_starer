@@ -3,15 +3,12 @@ import sys
 from env_config import settings
 from fastapi import FastAPI
 from fastapi_load import FastAPIStarter
-from routers.example_router.example_router import get_db
-from utils.db.database import engine, Base
+from utils.db.database import create_db_and_tables
 from utils.logger import Logger
 from middlewares import custom_middlewares_list
 from routers import routers_list
 
 version = f"{sys.version_info.major}.{sys.version_info.minor}"
-# Create all models in local db
-Base.metadata.create_all(bind=engine)
 
 class App:
     async def on_startup(self):
@@ -24,7 +21,6 @@ class App:
             raise e
 
     async def on_shutdown(self):
-        get_db().close()
         Logger.info(msg="shutting down...")
 
     # add new endpoints to init routers_list
@@ -39,5 +35,12 @@ class App:
         )
 
         return api
+
+
+if settings.db_url == "sqlite:///database.db":
+    Logger().info(
+        msg=f"Starting Database and Tables"
+    )
+    create_db_and_tables()
 
 app = App().create()

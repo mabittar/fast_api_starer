@@ -59,11 +59,11 @@ project_root = os.path.abspath(os.path.join(service_root, os.pardir))
 
 class DbSettings(BaseSettings):
     load_dotenv(dotenv_path="../local.env".format(project_root))
-    bd_host: str = Field(env="db_host")
-    db_port: int = Field(default=3360, env="db_port")
-    db_pool_size: int = Field(default="-1", env="db_pool_size")
-    db_url: str = Field(default="sqlite:///./sql_app.db", env="db_url")
-    project_name: str = Field(default="fastapi_starter", env="project_name")
+    bd_host: str = Field(env="DB_HOST")
+    db_port: int = Field(default=3360, env="DB_PORT")
+    db_pool_size: int = Field(default="-1", env="DB_POOL_SIZE")
+    db_url: str = Field(default="sqlite:///./sql_app.db", env="DB_URL")
+    project_name: str = Field(default="fastapi_starter", env="PROJECT_NAME")
     back_end_cors_origins: List[AnyHttpUrl] = []
 
     @validator("back_end_cors_origins", pre=True)

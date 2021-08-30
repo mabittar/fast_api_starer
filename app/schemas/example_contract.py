@@ -1,7 +1,6 @@
-import uuid
-from decimal import Decimal
+
 from enum import Enum
-from typing import List, Optional, Union
+from typing import Optional
 
 import pydantic
 from pydantic.main import BaseModel
@@ -18,6 +17,11 @@ class GenderEnum(str, Enum):
     other = "other"
     not_given = "not_given"
 
+class Point(BaseModel):
+    x: float = Field(..., multiple_of=0.01, description="Represents X coordinates",
+                     example="1.11", alias="float_numberX")
+    y: float = Field(..., multiple_of=0.01, description="Represents Y coordinates",
+                     example="3.11", alias="float_numberX")
 
 class PointInDB(IDModelMixin):
     pass 
@@ -71,9 +75,7 @@ class ExampleClassRequest(BaseModel):
 class ExampleInDB(DateTimeModelMixin, IDModelMixin, ExampleClassRequest):
     """Represents an Example Model in Database"""
 
-    public_key: Union[int, str, uuid.UUID] = Field(..., alias="public key",
-                                                   description="String identification",
-                                                   example=uuid.uuid4()
+    public_key: str = Field(..., alias="public key", description="String identification"
                                                    )
 
     class config:

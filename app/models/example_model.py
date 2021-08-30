@@ -1,30 +1,35 @@
 
-from sqlalchemy import DECIMAL, Column, DateTime, Enum, Integer, String, func
+from datetime import datetime
+from typing import Optional
+from uuid import UUID, uuid4
+from pydantic.networks import EmailStr
+from pydantic.types import condecimal
+from sqlalchemy import Column, Enum
 from sqlalchemy.sql.sqltypes import REAL
+from sqlmodel import Field, SQLModel
 
-from utils.db.database import Base
 
-
-class Example(Base):
-    __tablename__ = "example"
+class Example(SQLModel, table=True):
     """Represents a basic ORM model"""
-    id = Column(
-        Integer,
-        primary_key=True,
-        unique=True,
-        index=True,
-        autoincrement=True,
-        nullable=False,
-    )
-    public_key = Column(String(36), index=True, nullable=False)
-    name = Column(String(150), nullable=False)
-    email = Column(String(150))
+    id: Optional[int] = Field(default=None, primary_key=True)
+    public_key: UUID = Field(alias="public key", description="String identification",
+                                     default_factory=uuid4()
+                                                   )
+    name: str = Field(..., max_length=256, description="User name", alias="name")
+    email: EmailStr = Field(alias="email", description="User Email")
     gender = Column(Enum("male", "female", "other",
                     "not_given"), nullable=False)
-    float_number = Column(REAL(19, 2), nullable=False)
-    optional_integer = Column(Integer, nullable=True)
-    optional_float = Column(REAL(19, 2), nullable=True)
-    updated_at = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    float_number: float = Field(
+        ..., multiple_of=0.01, description="A float Number", alias="float_number"
+    )
+    optional_integer: int = Field(
+        None, description="An optional positive integer", alias="optional_integer"
+    )
+    optional_float: Optional[condecimal(max_digits=18, decimal_places=2)] = Field(
+        None, description="An optional float", alias="optional_float"
+    )
+    point_id: Optional[int] = Field(default=None, foreign_key="point.id")
+    updated_at: datetime = Field(None, alias="updated_at")
+    created_at: datetime = Field(alias="created_at", default_factory=datetime.utcnow)
 
-    # If you are using another DB engine should change REAL for DECIMALS
+    # If you are using another DB engine than SQLite could change REAL for DECIMALS

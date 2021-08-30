@@ -3,7 +3,6 @@ from typing import Any, Generator, List, Optional, Union
 from fastapi import APIRouter, HTTPException
 from fastapi.params import Depends, Path
 from sqlalchemy.orm.session import Session
-import models
 import schemas
 from services.example_service import ExampleService
 from utils.db.database import SessionLocal
