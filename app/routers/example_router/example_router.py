@@ -79,8 +79,7 @@ async def get_example_by_id(
         )
 
     with session:
-        example_service = ExampleService(
-            session=session)
+        example_service = ExampleService()
         example_model = example_service.get_data_by_id(
             example_id)
 
@@ -112,8 +111,7 @@ async def create_example_model(
         )
 
     with session:
-        example_service = ExampleService(
-            session=session)
+        example_service = ExampleService()
         example_model = example_service.create_example(
             example_data=example_item)
         session.commit()

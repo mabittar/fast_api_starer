@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional, Union
+from typing import List, Optional, Type, Union
 import uuid
 
 from sqlalchemy.orm.session import Session
@@ -12,12 +12,11 @@ from pydantic.types import UUID4
 
 
 class ExampleController(CRUDBase):
-    def __init__(self, session: Session):
-        super().__init__(model=Example)
-        self.session = session
+    def __init__(self, model: Type[Example]):
+        super().__init__(model)
 
     def create(self, data: ExampleClassRequest):
-        model = Example(
+        self.model = Example(
             
             name=data.name,
             gender=data.gender,
@@ -27,12 +26,10 @@ class ExampleController(CRUDBase):
             optional_float=data.optional_float
 
             )
-        model.public_key = str(uuid.uuid4())
-        model.created_at = datetime.now()
-        self.session.add(model)
-        self.session.flush()
+        self.model.public_key = str(uuid.uuid4())
+        self.model.created_at = datetime.now()
 
-        return model
+        return self.model
 
     async def update(
         self,
@@ -40,11 +37,8 @@ class ExampleController(CRUDBase):
 
         data: Example
     ) -> Example:
-        model = Example(**data.dict())
-        model.updated_at = datetime.datetime.now()
-
-        self.session.add(model)
-        self.session.flush()
+        self.model = Example(**data.dict())
+        self.model.updated_at = datetime.datetime.now()
 
         return self.model
 

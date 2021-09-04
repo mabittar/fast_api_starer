@@ -1,8 +1,7 @@
 from typing import Optional
 
 from controller.example_controller import ExampleController
-from sqlalchemy.orm.session import Session
-from schemas import ExampleResponse, ExamplePaginatedResponse, ExampleClassRequest
+from schemas import ExampleClassRequest
 from models.example_model import Example
 from utils.logger import Logger
 
@@ -10,12 +9,9 @@ from utils.logger import Logger
 class ExampleService:
     def __init__(
         self,
-
-        session: Session,
         logger: Optional[Logger] = None,
     ):
         self.logger = logger if logger is not None else Logger(class_name=__name__)
-        self.session = session
 
     def get_data(
         self,
@@ -24,7 +20,7 @@ class ExampleService:
         max_pagination: Optional[int] = None,
         first_result: Optional[bool] = False
     ):
-        example_controller = ExampleController(session=self.session)
+        example_controller = ExampleController()
         if self.example_data.get("first_result"):
             example_data_model = example_controller.get(
                 **example_data, first_result=first_result
@@ -45,7 +41,7 @@ class ExampleService:
         return example_data_model
 
     def create_example(self, *, example_data: ExampleClassRequest):
-        example_controller = ExampleController(session=self.session)
+        example_controller = ExampleController(model=Example)
         example_data_model = example_controller.create(
             data=example_data)
 
@@ -59,7 +55,7 @@ class ExampleService:
         return example_data_model
 
     def update_example(self, example_id, example_data: Example):
-        example_controller = ExampleController(session=self.session)
+        example_controller = ExampleController()
 
         example_data_model_to_update = example_controller.get(
             example_id, first_result=True
@@ -68,15 +64,13 @@ class ExampleService:
         example_data_model = example_controller.update(
             model=example_data_model_to_update, data=example_data
         )
-        
-        self.session.commit()
         return example_data_model
 
     def get_data_by_id(
         self,
         example_id,
     ):
-        example_controller = ExampleController(session=self.session)
+        example_controller = ExampleController()
         example_data_model = example_controller.get(example_id=example_id)
 
         return example_data_model

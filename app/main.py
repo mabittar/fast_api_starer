@@ -4,7 +4,7 @@ from env_config import settings
 from fastapi import FastAPI
 from fastapi_load import FastAPIStarter
 from routers.example_router.example_router import get_db
-from utils.db.database import engine, Base
+from utils.db.database import SessionLocal, engine, Base
 from utils.logger import Logger
 from middlewares import custom_middlewares_list
 from routers import routers_list
@@ -19,6 +19,12 @@ class App:
             Logger(class_name=__name__).info(
                 msg=f"{settings.project_name} STARTING...Using python version {version} and Uvicorn with Gunicorn"
             )
+            session = SessionLocal()
+            try:
+                yield session
+            except Exception as exc:
+                session.rollback()
+                raise exc
         except Exception as e:
             Logger(class_name=__name__).error(e)
             raise e

@@ -10,7 +10,7 @@ from sqlalchemy.pool import QueuePool
 
 
 engine = create_engine(
-    settings.db_url, pool_size=settings.db_pool_size, poolclass=QueuePool, pool_pre_ping=True)
+    settings.db_url, connect_args={"check_same_thread": False}, pool_size=settings.db_pool_size, poolclass=QueuePool, pool_pre_ping=True)
 
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=True, bind=engine)
