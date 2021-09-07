@@ -52,18 +52,26 @@ graceful_timeout = int(graceful_timeout_str)
 timeout = int(timeout_str)
 keepalive = int(keepalive_str)
 
-# DB config variables
-service_root = os.path.abspath(os.path.dirname(__file__))
-project_root = os.path.abspath(os.path.join(service_root, os.pardir))
+# ENV Settings
 
-
-class DbSettings(BaseSettings):
+class EnvSettings(BaseSettings):
+    service_root = os.path.abspath(os.path.dirname(__file__))
+    project_root = os.path.abspath(os.path.join(service_root, os.pardir))
     load_dotenv(dotenv_path="../local.env".format(project_root))
-    bd_host: str = Field(env="db_host")
-    db_port: int = Field(default=3360, env="db_port")
-    db_pool_size: int = Field(default="-1", env="db_pool_size")
-    db_url: str = Field(default="sqlite:///./sql_app.db", env="db_url")
-    project_name: str = Field(default="fastapi_starter", env="project_name")
+    DB_USERNAME: str = Field(default=None, env="DB_USERNAME")
+    DB_PASSWORD: str = Field(default=None, env="DB_PASSWORD")
+    DB_HOST: str = Field(default="127.0.0.1", env="DB_HOST")
+    DB_PORT: int = Field(default=3360, env="DB_PORT")
+    DB_POOL_SIZE: int = Field(default="-1", env="DB_POOL_SIZE")
+    PROJECT_NAME: str = Field(default="fastapi_starter", env="PROJECT_NAME")
+    url_path = f'mysql_pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{PROJECT_NAME}'
+
+    # if the project has db access auth uncomment this line and comment next one
+    #DB_URL: str = Field(default=url_path)
+    
+    DB_URL: str = Field(default="sqlite:///./sql_app.db", env="db_url")
+
+
     back_end_cors_origins: List[AnyHttpUrl] = []
 
     @validator("back_end_cors_origins", pre=True)
@@ -74,7 +82,7 @@ class DbSettings(BaseSettings):
             return v
         raise ValueError(v)
 
-settings = DbSettings()
+settings = EnvSettings()
 
 
 # For debugging and testing
@@ -94,14 +102,14 @@ log_data = {
     "port": port,
 }
 
-db_path = f"{settings.bd_host}:{settings.db_port}"
+db_path = f"{settings.DB_HOST}:{settings.DB_PORT}"
 project_path = f"project_root"
 db_data = dict(
-    project_name=settings.project_name,
+    project_name=settings.PROJECT_NAME,
     project_path=project_path,
-    db_url=settings.db_url,
+    db_url=settings.DB_URL,
     db_path=db_path,
-    db_pool_size=settings.db_pool_size,
+    db_pool_size=settings.DB_POOL_SIZE,
 )
 
 print(json.dumps(log_data))

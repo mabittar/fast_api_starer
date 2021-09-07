@@ -1,4 +1,4 @@
-from typing import Any, Generator, List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from fastapi import APIRouter, HTTPException
 from fastapi.params import Depends, Path
@@ -6,20 +6,9 @@ from sqlalchemy.orm.session import Session
 import models
 import schemas
 from services.example_service import ExampleService
-from utils.db.database import SessionLocal
+from utils.db.database import SQLConnector
 
 example_router = APIRouter()
-
-
-def get_db() -> Generator:
-    session = SessionLocal()
-    try:
-        yield session
-    except Exception as exc:
-        session.rollback()
-        raise exc
-    finally:
-        session.close()
 
 @example_router.get(
     "/example",
@@ -31,7 +20,7 @@ def get_db() -> Generator:
 )
 async def get_example_models(
     example_item,
-    session: Session = Depends(get_db),
+    session: Session = Depends(SQLConnector.create_session()),
     page: Optional[int] = 1,
     max_pagination: Optional[int] = 10,
     first_result: Optional[bool] = False,
@@ -65,7 +54,7 @@ async def get_example_models(
 )
 async def get_example_by_id(
     example_id: int = Path(..., title="Use ID to get an example"),
-    session: Session = Depends(get_db),
+    session: Session = Depends(SQLConnector.create_session()),
 ) -> Any:
     """
     This is a endpoint is used to get Example Class Model
@@ -97,7 +86,7 @@ async def get_example_by_id(
 )
 async def create_example_model(
         example_item: schemas.ExampleClassRequest,
-        session: Session = Depends(get_db)
+        session: Session = Depends(SQLConnector.create_session())
         ) -> Any:
     """
     This is a endpoint is used to create a new Example Class Model
@@ -131,7 +120,7 @@ async def create_example_model(
 async def update_example_model(
         example_item: schemas.ExampleClassRequest,
         example_id: int = Path(..., title="Use ID to get an example"),
-        session: Session = Depends(get_db)
+        session: Session = Depends(SQLConnector.create_session())
         ):
     """
     This is a endpoint is used to update an existing Example Class Model

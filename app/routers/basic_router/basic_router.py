@@ -7,8 +7,8 @@ from starlette.responses import Response
 
 from schemas.status_contract import StatusResponseModel
 
-router = APIRouter()
 
+router = APIRouter()
 
 @router.get(
     "/",
@@ -23,7 +23,7 @@ async def home(req: Request) -> StatusResponseModel:
     message = f"Welcome to FaseAPI Starter! From Uvicorn with Gunicorn. Using Python {version}".encode(
         "utf-8"
     )
-    return StatusResponseModel(api=settings.project_name, msg=message)
+    return StatusResponseModel(api=settings.PROJECT_NAME, msg=message)
 
 
 @router.get(
@@ -37,7 +37,9 @@ async def health_check(req: Request) -> StatusResponseModel:
 
 
 @router.get(
-    "/status/all_routes", tags=["status"], description="List all available routes"
+    "/status/all_routes", 
+    tags=["status"], 
+    description="List all available routes"
 )
 async def get_all_routes(req: Request) -> List[str]:
     # Using FastAPI instance

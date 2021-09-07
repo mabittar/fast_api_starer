@@ -3,25 +3,25 @@ import sys
 from env_config import settings
 from fastapi import FastAPI
 from fastapi_load import FastAPIStarter
-from routers.example_router.example_router import get_db
-from utils.db.database import SessionLocal, engine, Base
+from utils.db.database import SQLConnector, Base
 from utils.logger import Logger
 from middlewares import custom_middlewares_list
 from routers import routers_list
 
 version = f"{sys.version_info.major}.{sys.version_info.minor}"
 # Create all models in local db
-Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=SQLConnector.get_engine())
 
 class App:
     async def on_startup(self):
         try:
             Logger(class_name=__name__).info(
-                msg=f"{settings.project_name} STARTING...Using python version {version} and Uvicorn with Gunicorn"
+                msg=f"{settings.PROJECT_NAME} STARTING...Using python version {version} and Uvicorn with Gunicorn"
             )
-            session = SessionLocal()
+            session = await SQLConnector.create_session()
             try:
                 yield session
+
             except Exception as exc:
                 session.rollback()
                 raise exc
@@ -30,7 +30,7 @@ class App:
             raise e
 
     async def on_shutdown(self):
-        get_db().close()
+        SQLConnector.close()
         Logger.info(msg="shutting down...")
 
     # add new endpoints to init routers_list

@@ -7,7 +7,7 @@ class FastAPIStarter:
     @classmethod
     def start_up(
         cls,
-        title: str = settings.project_name,
+        title: str = settings.PROJECT_NAME,
         routers: Optional[List] = None,
         middlewares: Optional[List] = None,
         on_startup: Optional[Sequence[Callable[[], Any]]] = None,
