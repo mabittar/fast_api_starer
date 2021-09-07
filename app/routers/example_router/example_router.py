@@ -20,7 +20,6 @@ example_router = APIRouter()
 )
 async def get_example_models(
     example_item,
-    session: Session = Depends(SQLConnector.create_session()),
     page: Optional[int] = 1,
     max_pagination: Optional[int] = 10,
     first_result: Optional[bool] = False,
@@ -35,7 +34,7 @@ async def get_example_models(
             status_code=404,
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
-    with session:
+    with SQLConnector.create_session() as session:
         example_service = ExampleService(
             session=session)
         example_model = example_service.get_data(
@@ -54,7 +53,6 @@ async def get_example_models(
 )
 async def get_example_by_id(
     example_id: int = Path(..., title="Use ID to get an example"),
-    session: Session = Depends(SQLConnector.create_session()),
 ) -> Any:
     """
     This is a endpoint is used to get Example Class Model
@@ -67,7 +65,7 @@ async def get_example_by_id(
             detail=f"Oops! ID cannot be null, please check documentation.",
         )
 
-    with session:
+    with SQLConnector.create_session() as session:
         example_service = ExampleService()
         example_model = example_service.get_data_by_id(
             example_id)
@@ -86,7 +84,6 @@ async def get_example_by_id(
 )
 async def create_example_model(
         example_item: schemas.ExampleClassRequest,
-        session: Session = Depends(SQLConnector.create_session())
         ) -> Any:
     """
     This is a endpoint is used to create a new Example Class Model
@@ -99,7 +96,7 @@ async def create_example_model(
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
 
-    with session:
+    with SQLConnector.create_session() as session:
         example_service = ExampleService()
         example_model = example_service.create_example(
             example_data=example_item)
@@ -120,7 +117,6 @@ async def create_example_model(
 async def update_example_model(
         example_item: schemas.ExampleClassRequest,
         example_id: int = Path(..., title="Use ID to get an example"),
-        session: Session = Depends(SQLConnector.create_session())
         ):
     """
     This is a endpoint is used to update an existing Example Class Model
@@ -132,7 +128,7 @@ async def update_example_model(
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
 
-    with session:
+    with SQLConnector.create_session() as session:
         example_service = ExampleService(
             session=session)
         model_updated = example_service.update_example(
