@@ -23,7 +23,7 @@ async def get_examples(
     page: Optional[int] = 1,
     max_pagination: Optional[int] = 10,
     first_result: Optional[bool] = False,
-    session: AsyncSession = Depends(SQLConnector.get_session())
+    session: AsyncSession = Depends(SQLConnector.get_session)
 ) -> Any:
     """
     This is a endpoint is used to get Example Class Model
@@ -58,7 +58,7 @@ async def get_examples(
 )
 async def add_example(
         example_item: ExampleCreate,
-        session: AsyncSession = Depends(SQLConnector.get_session())
+        session: AsyncSession = Depends(SQLConnector.get_session)
         ) -> Any:
     """
     This is a endpoint is used to create a new Example Class Model
@@ -100,7 +100,7 @@ async def add_example(
 async def update_example_model(
         example_item: ExampleCreate,
         example_id: int = Path(..., title="Use ID to get an example"),
-        session: AsyncSession = Depends(SQLConnector.get_session())
+        session: AsyncSession = Depends(SQLConnector.get_session)
         ):
     """
     This is a endpoint is used to update an existing Example Class Model

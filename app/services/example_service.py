@@ -1,7 +1,6 @@
 from typing import Optional
 
 from controller.example_controller import ExampleController
-from schemas import ExampleClassRequest
 from models.example_model import Example
 from utils.logger import Logger
 
@@ -40,7 +39,7 @@ class ExampleService:
 
         return example_data_model
 
-    def create_example(self, *, example_data: ExampleClassRequest):
+    def create_example(self, *, example_data: Example):
         example_controller = ExampleController(model=Example)
         example_data_model = example_controller.create(
             data=example_data)

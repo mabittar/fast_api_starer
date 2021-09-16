@@ -37,3 +37,6 @@ class SQLConnector:
         )
         async with async_session() as session:
             yield session
+
+
+Base = declarative_base()
