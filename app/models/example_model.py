@@ -1,30 +1,53 @@
+from typing import Optional
+from pydantic.networks import EmailStr
+from datetime import datetime
+from pydantic.types import UUID4
+from sqlmodel import SQLModel, Field
+from sqlalchemy import  Enum
+from sqlmodel.main import Relationship
 
-from sqlalchemy import DECIMAL, Column, DateTime, Enum, Integer, String, func
-from sqlalchemy.sql.sqltypes import REAL
-
-from utils.db.database import Base
+from models.commom import CreatedAtModel, IDModel, Pagination, UpdateAtModel
+from models.point_model import Point, PointCreate
 
 
-class Example(Base):
-    __tablename__ = "example"
-    """Represents a basic ORM model"""
-    id = Column(
-        Integer,
-        primary_key=True,
-        unique=True,
-        index=True,
-        autoincrement=True,
-        nullable=False,
+class GenderEnum(str, Enum):
+    male = "male"
+    female = "female"
+    other = "other"
+    not_given = "not_given"
+
+
+class ExampleBase(SQLModel):
+    name: str = Field(..., max_length=256, description="User name",
+                      alias="name")
+    email: EmailStr = Field(alias="email", description="User Email"
+                            )
+    gender: GenderEnum = Field(...,
+                               description="Enumerator Class Model", alias="gender")
+    float_number: float = Field(
+        ..., multiple_of=0.01, description="A float Number", alias="float_number"
     )
-    public_key = Column(String(36), index=True, nullable=False)
-    name = Column(String(150), nullable=False)
-    email = Column(String(150))
-    gender = Column(Enum("male", "female", "other",
-                    "not_given"), nullable=False)
-    float_number = Column(REAL(19, 2), nullable=False)
-    optional_integer = Column(Integer, nullable=True)
-    optional_float = Column(REAL(19, 2), nullable=True)
-    updated_at = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    optional_integer: Optional[int] = Field(
+        None, description="An optional positive integer",  alias="optional_integer"
+    )
+    optional_float: Optional[float] = Field(
+        None, description="An optional float", alias="optional_float"
+    )
+    point: Optional[Point] = Relationship(back_populates="Point")
 
-    # If you are using another DB engine should change REAL for DECIMALS
+
+class ExamplePointId(ExampleBase):
+    point_id: Optional[int] = Field(default=None, foreign_key="point.id")
+
+class Example(ExampleBase, IDModel, UpdateAtModel, CreatedAtModel, table=True):
+    pass
+
+class ExampleUpdate(ExampleBase, UpdateAtModel):
+    pass
+
+
+class ExampleGet(ExamplePointId, Pagination, CreatedAtModel):
+    pass
+
+class ExampleCreate(ExampleBase):
+    pass

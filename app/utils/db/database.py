@@ -3,10 +3,11 @@ from typing import Optional
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.session import Session
 
-
+from sqlmodel import SQLModel
 from env_config import settings
 from sqlalchemy.engine import create_engine, Engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import QueuePool
 
 
@@ -15,26 +16,24 @@ class SQLConnector:
 
     @classmethod
     def get_engine(cls) -> Engine:
-        engine = create_engine(
+        engine = create_async_engine(
         settings.DB_URL, 
         pool_size=settings.DB_POOL_SIZE, 
-        poolclass=QueuePool, 
-        pool_pre_ping=True,
-        connect_args={"check_same_thread": False},
+        poolclass=QueuePool,
+        echo=True, 
+        future=True
         )
         return engine
 
     @classmethod
-    def create_session(cls) -> Session:
-        SessionLocal = scoped_session(
-            sessionmaker(autocommit=False, autoflush=True, bind=cls.get_engine())
-            )
-        return SessionLocal
+    async def init_db(cls):
+        async with cls.get_engine() as conn:
+            await conn.run_sync(SQLModel.metadata.create_all)
 
     @classmethod
-    def close(cls) -> None:
-        if cls.engine:
-            cls.engine.dispose()
-        cls.engine = None
-
-Base = declarative_base()
+    async def get_session(cls) -> AsyncSession:
+        async_session = sessionmaker(
+            cls.get_engine(), class_=AsyncSession, expire_on_commit=False
+        )
+        async with async_session() as session:
+            yield session

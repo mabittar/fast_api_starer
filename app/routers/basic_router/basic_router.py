@@ -5,25 +5,25 @@ from env_config import settings
 from fastapi import APIRouter, Request
 from starlette.responses import Response
 
-from schemas.status_contract import StatusResponseModel
-
-
 router = APIRouter()
 
 @router.get(
     "/",
     status_code=200,
     tags=["status"],
-    response_model=StatusResponseModel,
     description="Give some information about the running service",
 )
 
-async def home(req: Request) -> StatusResponseModel:
+async def home(req: Request):
     version = f"{sys.version_info.major}.{sys.version_info.minor}"
     message = f"Welcome to FaseAPI Starter! From Uvicorn with Gunicorn. Using Python {version}".encode(
         "utf-8"
     )
-    return StatusResponseModel(api=settings.PROJECT_NAME, msg=message)
+    response = dict(
+        api=settings.PROJECT_NAME,
+        msg=message
+    )
+    return response
 
 
 @router.get(
@@ -32,7 +32,7 @@ async def home(req: Request) -> StatusResponseModel:
     tags=["status"],
     description="Status Check",
 )
-async def health_check(req: Request) -> StatusResponseModel:
+async def health_check(req: Request):
     return Response(status_code=200)
 
 

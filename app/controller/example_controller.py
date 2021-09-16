@@ -6,7 +6,6 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.expression import asc, desc
 from controller.base_controller import CRUDBase
 
-from schemas.example_contract import ExampleClassRequest
 from models.example_model import Example
 from pydantic.types import UUID4
 
@@ -15,7 +14,7 @@ class ExampleController(CRUDBase):
     def __init__(self, model: Type[Example]):
         super().__init__(model)
 
-    def create(self, data: ExampleClassRequest):
+    def create(self, data: Example):
         self.model = Example(
             
             name=data.name,
