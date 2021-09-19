@@ -1,7 +1,12 @@
 from typing import Optional
+from uuid import uuid4
+from datetime import datetime
+from sqlalchemy.future import select
+from sqlmodel import Session
 
 from controller.example_controller import ExampleController
-from models.example_model import Example
+from models.example_model import Example, ExampleCreate, ExampleGet
+from utils.db.database import SQLConnector
 from utils.logger import Logger
 
 
@@ -9,52 +14,52 @@ class ExampleService:
     def __init__(
         self,
         logger: Optional[Logger] = None,
+        session: Session = None
     ):
         self.logger = logger if logger is not None else Logger(class_name=__name__)
-
-    def get_data(
+        self.session = session if session is not None else SQLConnector.get_session
+    
+    async def get_data(
         self,
-        example_data: Example,
-        page: Optional[int] = None, 
-        max_pagination: Optional[int] = None,
+        example_data: ExampleGet,
+        page: Optional[int] = 1, 
+        max_pagination: Optional[int] = 15,
         first_result: Optional[bool] = False
     ):
-        example_controller = ExampleController()
-        if self.example_data.get("first_result"):
-            example_data_model = example_controller.get(
-                **example_data, first_result=first_result
-            )
+        with self.session:
+            query = select(ExampleGet)
+            if id is not None:
+                query = self.session.exec(query).where(ExampleGet.id == example_data.id)
+            if first_result:
+                query = self.session.exec(query).first()
+                return query
+            else:
+                query = self.session.exec(query)
 
-        elif page and max_pagination:
-            example_data_model = example_controller.get(
-                **example_data, page_number=page, page_size=max_pagination
-            )
-        else:
-            example_data_model = example_controller.get(**example_data)
+                if page and max_pagination:
+                    query = self.session.exec(query).offset(
+                        page * max_pagination).limit(max_pagination)
 
-        # if example_data_model.optional_float and example_data_model.optional_integer:
-        #     output_optional = example_data_model.optional_float * \
-        #         example_data_model.optional_integer
-        #     example_data_model.output_optional = output_optional
+            return query
 
-        return example_data_model
+    async def create_example(self, example_data: Example):
+        example = Example(
+            name=example_data.name,
+            email=example_data.email,
+            gender=example_data.gender,
+            float_number=example_data.float_number,
+            optional_integer=example_data.optional_integer,
+            optional_float=example_data.optional_float,
+            public_key=uuid4(),
+            created_at=datetime.now()
+        )
+        self.session.add(example)
+        self.session.flush()
 
-    def create_example(self, *, example_data: Example):
-        example_controller = ExampleController(model=Example)
-        example_data_model = example_controller.create(
-            data=example_data)
-
-
-        if example_data_model.optional_float and example_data_model.optional_integer:
-            output_optional = example_data_model.optional_float * \
-                example_data_model.optional_integer
-            example_data_model.output_optional = output_optional
-
-
-        return example_data_model
+        return example
 
     def update_example(self, example_id, example_data: Example):
-        example_controller = ExampleController()
+        example_controller = ExampleController(self.session)
 
         example_data_model_to_update = example_controller.get(
             example_id, first_result=True

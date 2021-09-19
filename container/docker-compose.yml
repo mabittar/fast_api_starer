@@ -1,0 +1,19 @@
+version: "3.7"
+services:
+  db:
+    build:
+      context: ../..
+      dockerfile: infrastructure/container/test.database.Dockerfile
+    environment:
+      - MYSQL_ROOT_PASSWORD=my_root_pwd
+      - MYSQL_USER=my_user
+      - MYSQL_PASSWORD=my_pwd
+    ports:
+    - "33060:3306"
+
+  redis:
+    image: redis:5.0.7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: redis-server

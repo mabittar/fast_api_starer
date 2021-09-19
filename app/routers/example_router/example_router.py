@@ -1,6 +1,4 @@
-from datetime import datetime
 from typing import Any, List, Optional, Union
-from uuid import uuid4
 from sqlalchemy.future import select
 from fastapi import APIRouter, HTTPException
 from fastapi.params import Depends, Path
@@ -29,12 +27,9 @@ async def get_examples(
     This is a endpoint is used to get Example Class Model
 
     """
-    result = await session.execute(select(Example))
-    if first_result:
-        examples = result.scalars().first()
-    else:
-        examples = result.scalars().all()
-
+    example_service = ExampleService(session=session)
+    results = await example_service.get_data(ExampleGet, page=page, max_pagination=max_pagination, first_result=first_result)
+    
     response = [ExampleGet(
         name=example.name, 
         email=example.email,
@@ -45,7 +40,8 @@ async def get_examples(
         id=example.id,
         public_key=example.public_key,
         created_at=example.created_at,
-        ) for example in examples]
+    ) for example in results]
+
     return response
 
 @example_router.post(
@@ -71,18 +67,10 @@ async def add_example(
             detail=f"Oops! Payload cannot be null, please check documentation.",
         )
 
-    example = Example(
-        name=example_item.name,
-        email=example_item.email,
-        gender=example_item.gender,
-        float_number=example_item.float_number,
-        optional_integer=example_item.optional_integer,
-        optional_float=example_item.optional_float,
-        uuid=uuid4(),
-        created_at=datetime.now()
-        )
-
-    session.add(example)
+    
+    example_service = ExampleService(session=session)
+    example = await example_service.create_example(example_item)
+    
     await session.commit()
     await session.refresh(example)
     

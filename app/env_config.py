@@ -69,7 +69,7 @@ class EnvSettings(BaseSettings):
     # if the project has db access auth uncomment this line and comment next one
     #DB_URL: str = Field(default=url_path)
     
-    DB_URL: str = Field(default="sqlite:///./sql_app.db", env="db_url")
+    DB_URL: str = Field(default="sqlite+aiosqlite:///:memory:", env="db_url")
 
 
     back_end_cors_origins: List[AnyHttpUrl] = []

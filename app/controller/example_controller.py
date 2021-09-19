@@ -32,7 +32,6 @@ class ExampleController(CRUDBase):
 
     async def update(
         self,
-        model: Example,
 
         data: Example
     ) -> Example:
